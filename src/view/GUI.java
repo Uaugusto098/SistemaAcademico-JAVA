@@ -18,11 +18,18 @@ import javax.swing.JDesktopPane;
 import javax.swing.JScrollPane;
 import java.awt.TextField;
 import javax.swing.JTabbedPane;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import java.awt.Font;
+import javax.swing.JTextField;
 
 public class GUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	private JTextField textField;
+	private JTextField textField_1;
+	private JTextField textField_2;
 
 	/**
 	 * Launch the application.
@@ -55,7 +62,7 @@ public class GUI extends JFrame {
 		contentPane.setLayout(null);
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(123, 62, 893,442);
+		tabbedPane.setBounds(231, 65, 671,442);
 		contentPane.add(tabbedPane);
 		
 		
@@ -73,10 +80,39 @@ public class GUI extends JFrame {
 		
 		
 		tabbedPane.addTab("Dados Pessoais",null,panelDados,"Informações do Aluno");
+		
+		JLabel lblNewLabel = new JLabel("RA");
+		lblNewLabel.setFont(new Font("Dubai", Font.PLAIN, 18));
+		lblNewLabel.setBounds(21, 24, 46, 14);
+		panelDados.add(lblNewLabel);
+		
+		textField = new JTextField();
+		textField.setBounds(51, 22, 101, 20);
+		panelDados.add(textField);
+		textField.setColumns(10);
+		
+		textField_1 = new JTextField();
+		textField_1.setColumns(10);
+		textField_1.setBounds(51, 64, 101, 20);
+		panelDados.add(textField_1);
+		
+		JLabel lblNewLabel_1 = new JLabel("RA");
+		lblNewLabel_1.setFont(new Font("Dubai", Font.PLAIN, 18));
+		lblNewLabel_1.setBounds(21, 66, 46, 14);
+		panelDados.add(lblNewLabel_1);
+		
+		textField_2 = new JTextField();
+		textField_2.setColumns(10);
+		textField_2.setBounds(51, 112, 101, 20);
+		panelDados.add(textField_2);
+		
+		JLabel lblNewLabel_1_1 = new JLabel("RA");
+		lblNewLabel_1_1.setFont(new Font("Dubai", Font.PLAIN, 18));
+		lblNewLabel_1_1.setBounds(21, 114, 46, 14);
+		panelDados.add(lblNewLabel_1_1);
 		tabbedPane.addTab("Cursos",null,panelCurso,"Curso do Aluno");
 		tabbedPane.addTab("Notas e Faltas",null,panelNotasFaltas,"Notas e faltas do aluno");
 		tabbedPane.addTab("Boletim",null,panelBoletim,"Boletim Completo");
-		
 		
 		
 		contentPane.add(tabbedPane);
