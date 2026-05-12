@@ -22,6 +22,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JTextField;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class GUI extends JFrame {
 
@@ -111,6 +113,14 @@ public class GUI extends JFrame {
 		lblNewLabel_1_1.setBounds(21, 114, 46, 14);
 		panelDados.add(lblNewLabel_1_1);
 		tabbedPane.addTab("Cursos",null,panelCurso,"Curso do Aluno");
+		
+		JButton btnNewButton = new JButton("botao");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnNewButton.setBounds(101, 156, 89, 23);
+		panelCurso.add(btnNewButton);
 		tabbedPane.addTab("Notas e Faltas",null,panelNotasFaltas,"Notas e faltas do aluno");
 		tabbedPane.addTab("Boletim",null,panelBoletim,"Boletim Completo");
 		
