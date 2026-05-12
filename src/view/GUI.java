@@ -40,6 +40,10 @@ public class GUI extends JFrame {
 	private JTextField textField_5;
 	private JTextField textField_6;
 	private JTextField textField_7;
+	private JTextField txtRaNotas;
+	private JTextField txtNomeNotas;
+	private JTextField txtCursoNotas;
+	private JTextField txtFaltas;
 
 	/**
 	 * Launch the application.
@@ -103,12 +107,12 @@ public class GUI extends JFrame {
 		
 		JLabel lblNewLabel_1 = new JLabel("Nome");
 		lblNewLabel_1.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblNewLabel_1.setBounds(21, 66, 46, 14);
+		lblNewLabel_1.setBounds(21, 66, 57, 14);
 		panelDados.add(lblNewLabel_1);
 		
 		JLabel lblNewLabel_1_1 = new JLabel("Data de Nascimento");
 		lblNewLabel_1_1.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblNewLabel_1_1.setBounds(21, 114, 154, 14);
+		lblNewLabel_1_1.setBounds(21, 114, 162, 14);
 		panelDados.add(lblNewLabel_1_1);
 		
 		textField_1 = new JTextField();
@@ -118,7 +122,7 @@ public class GUI extends JFrame {
 		
 		textField_2 = new JTextField();
 		textField_2.setColumns(10);
-		textField_2.setBounds(178, 112, 158, 20);
+		textField_2.setBounds(193, 114, 158, 20);
 		panelDados.add(textField_2);
 		
 		JLabel lblNewLabel_1_1_1 = new JLabel("Email");
@@ -138,12 +142,12 @@ public class GUI extends JFrame {
 		
 		JLabel lblNewLabel_1_2 = new JLabel("Endereço");
 		lblNewLabel_1_2.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblNewLabel_1_2.setBounds(21, 213, 76, 14);
+		lblNewLabel_1_2.setBounds(21, 213, 89, 14);
 		panelDados.add(lblNewLabel_1_2);
 		
 		JLabel lblNewLabel_1_1_2 = new JLabel("CPF");
 		lblNewLabel_1_1_2.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblNewLabel_1_1_2.setBounds(370, 24, 34, 14);
+		lblNewLabel_1_1_2.setBounds(370, 24, 46, 14);
 		panelDados.add(lblNewLabel_1_1_2);
 		
 		textField_5 = new JTextField();
@@ -213,6 +217,85 @@ public class GUI extends JFrame {
 		btnNewButton.setBounds(101, 156, 89, 23);
 		panelCurso.add(btnNewButton);
 		tabbedPane.addTab("Notas e Faltas",null,panelNotasFaltas,"Notas e faltas do aluno");
+		JLabel lblRa = new JLabel("RA");
+		lblRa.setFont(new Font("Dialog", Font.PLAIN, 18));
+		lblRa.setBounds(10, 25, 46, 14);
+		panelNotasFaltas.add(lblRa);
+		
+		JLabel lblDisciplina = new JLabel("Disciplina");
+		lblDisciplina.setFont(new Font("Dialog", Font.PLAIN, 18));
+		lblDisciplina.setBounds(10, 118, 88, 24);
+		panelNotasFaltas.add(lblDisciplina);
+		
+		JComboBox cmbCursoNotas = new JComboBox();
+		cmbCursoNotas.setBounds(99, 122, 383, 22);
+		panelNotasFaltas.add(cmbCursoNotas);
+		
+		JLabel lblSemestre = new JLabel("Semestre");
+		lblSemestre.setFont(new Font("Dialog", Font.PLAIN, 18));
+		lblSemestre.setBounds(10, 181, 81, 24);
+		panelNotasFaltas.add(lblSemestre);
+		
+		JComboBox cmbSemestre = new JComboBox();
+		cmbSemestre.setBounds(99, 185, 94, 22);
+		panelNotasFaltas.add(cmbSemestre);
+		
+		JLabel lblNota = new JLabel("Nota");
+		lblNota.setFont(new Font("Dialog", Font.PLAIN, 18));
+		lblNota.setBounds(234, 181, 38, 24);
+		panelNotasFaltas.add(lblNota);
+		
+		JComboBox cmbSemestre_1 = new JComboBox();
+		cmbSemestre_1.setBounds(282, 185, 53, 22);
+		panelNotasFaltas.add(cmbSemestre_1);
+		
+		JLabel lblFaltas = new JLabel("Faltas");
+		lblFaltas.setFont(new Font("Dialog", Font.PLAIN, 18));
+		lblFaltas.setBounds(389, 181, 53, 24);
+		panelNotasFaltas.add(lblFaltas);
+		
+		JButton btnExcluirNotas = new JButton("Excluir");
+		btnExcluirNotas.setBounds(413, 268, 89, 45);
+		panelNotasFaltas.add(btnExcluirNotas);
+		
+		JButton btnSairNotas = new JButton("Sair");
+		btnSairNotas.setBounds(543, 268, 89, 45);
+		panelNotasFaltas.add(btnSairNotas);
+		
+		JButton btnConsultarNotas = new JButton("Consultar");
+		btnConsultarNotas.setBounds(283, 268, 89, 45);
+		panelNotasFaltas.add(btnConsultarNotas);
+		
+		JButton btnAlterarNotas = new JButton("Alterar");
+		btnAlterarNotas.setBounds(152, 268, 89, 45);
+		panelNotasFaltas.add(btnAlterarNotas);
+		
+		JButton btnSalvarNotas = new JButton("Salvar");
+		btnSalvarNotas.setBounds(26, 268, 89, 45);
+		panelNotasFaltas.add(btnSalvarNotas);
+		
+		txtRaNotas = new JTextField();
+		txtRaNotas.setColumns(10);
+		txtRaNotas.setBounds(43, 25, 198, 20);
+		panelNotasFaltas.add(txtRaNotas);
+		
+		txtNomeNotas = new JTextField("Deverá mostrar o nome do Aluno");
+		txtNomeNotas.setEditable(false);
+		txtNomeNotas.setColumns(10);
+		txtNomeNotas.setBounds(284, 25, 369, 20);
+		panelNotasFaltas.add(txtNomeNotas);
+		
+		txtCursoNotas = new JTextField("Deverá mostrar o curso do Aluno");
+		txtCursoNotas.setEditable(false);
+		txtCursoNotas.setColumns(10);
+		txtCursoNotas.setBounds(26, 70, 627, 20);
+		panelNotasFaltas.add(txtCursoNotas);
+		
+		txtFaltas = new JTextField();
+		txtFaltas.setColumns(10);
+		txtFaltas.setBounds(445, 186, 102, 20);
+		panelNotasFaltas.add(txtFaltas);
+		
 		tabbedPane.addTab("Boletim",null,panelBoletim,"Boletim Completo");
 		
 		
