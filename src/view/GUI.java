@@ -9,6 +9,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButton;
+
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -27,6 +29,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JSeparator;
 import javax.swing.JScrollBar;
 import javax.swing.JToggleButton;
+import javax.swing.ButtonGroup;
 
 public class GUI extends JFrame {
 
@@ -44,6 +47,7 @@ public class GUI extends JFrame {
 	private JTextField txtNomeNotas;
 	private JTextField txtCursoNotas;
 	private JTextField txtFaltas;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
 
 	/**
 	 * Launch the application.
@@ -209,13 +213,80 @@ public class GUI extends JFrame {
 		panelDados.add(btnNewButton_1_4);
 		tabbedPane.addTab("Cursos",null,panelCurso,"Curso do Aluno");
 		
-		JButton btnNewButton = new JButton("botao");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		JLabel lblCurso = new JLabel("Curso");
+		lblCurso.setFont(new Font("Dubai", Font.PLAIN, 18));
+		lblCurso.setBounds(10, 31, 46, 14);
+		panelCurso.add(lblCurso);
+		
+		JLabel lblCampus = new JLabel("Campus");
+		lblCampus.setFont(new Font("Dubai", Font.PLAIN, 18));
+		lblCampus.setBounds(10, 73, 58, 14);
+		panelCurso.add(lblCampus);
+		
+		JLabel lblPeriodo = new JLabel("Período");
+		lblPeriodo.setFont(new Font("Dubai", Font.PLAIN, 18));
+		lblPeriodo.setBounds(10, 112, 58, 14);
+		panelCurso.add(lblPeriodo);
+		
+		JComboBox cmbCursos = new JComboBox();
+		cmbCursos.setBounds(96, 28, 286, 22);
+		panelCurso.add(cmbCursos);
+		
+		JComboBox cmbCampus = new JComboBox();
+		cmbCampus.setBounds(96, 70, 286, 22);
+		panelCurso.add(cmbCampus);
+		
+		JRadioButton rdbtnMatutino = new JRadioButton("Matutino");
+		buttonGroup.add(rdbtnMatutino);
+		rdbtnMatutino.setFont(new Font("Dubai", Font.PLAIN, 14));
+		buttonGroup.add(rdbtnMatutino);
+		rdbtnMatutino.setBounds(106, 109, 79, 23);
+		panelCurso.add(rdbtnMatutino);
+		
+		JRadioButton rdbtnVespertino = new JRadioButton("Vespertino");
+		buttonGroup.add(rdbtnVespertino);
+		rdbtnVespertino.setFont(new Font("Dubai", Font.PLAIN, 14));
+		buttonGroup.add(rdbtnVespertino);
+		rdbtnVespertino.setBounds(187, 109, 89, 23);
+		panelCurso.add(rdbtnVespertino);
+		
+		JRadioButton rdbtnNoturno = new JRadioButton("Noturno");
+		buttonGroup.add(rdbtnNoturno);
+		rdbtnNoturno.setFont(new Font("Dubai", Font.PLAIN, 14));
+		buttonGroup.add(rdbtnNoturno);
+		rdbtnNoturno.setBounds(278, 109, 74, 23);
+		panelCurso.add(rdbtnNoturno);
+		
+		JButton btnSalvarNotas_1 = new JButton("Salvar");
+		btnSalvarNotas_1.setBounds(32, 265, 89, 45);
+		panelCurso.add(btnSalvarNotas_1);
+		
+		JButton btnAlterarNotas_1 = new JButton("Alterar");
+		btnAlterarNotas_1.setBounds(158, 265, 89, 45);
+		panelCurso.add(btnAlterarNotas_1);
+		
+		JButton btnConsultarNotas_1 = new JButton("Consultar");
+		btnConsultarNotas_1.setBounds(289, 265, 89, 45);
+		panelCurso.add(btnConsultarNotas_1);
+		
+		JButton btnExcluirNotas_1 = new JButton("Excluir");
+		btnExcluirNotas_1.setBounds(419, 265, 89, 45);
+		panelCurso.add(btnExcluirNotas_1);
+		
+		JButton btnSairNotas_1 = new JButton("Sair");
+		btnSairNotas_1.setBounds(549, 265, 89, 45);
+		panelCurso.add(btnSairNotas_1);
+		
+		JButton btnSalvar2 = new JButton("");
+		btnSalvar2.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
 			}
 		});
-		btnNewButton.setBounds(101, 156, 89, 23);
-		panelCurso.add(btnNewButton);
+		
+		
+		
+		
+		
 		tabbedPane.addTab("Notas e Faltas",null,panelNotasFaltas,"Notas e faltas do aluno");
 		JLabel lblRa = new JLabel("RA");
 		lblRa.setFont(new Font("Dialog", Font.PLAIN, 18));
