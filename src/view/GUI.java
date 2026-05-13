@@ -97,6 +97,8 @@ public class GUI extends JFrame {
 		panelBoletim.setLayout(null);
 		
 		
+		
+		//ABA DADOS PESSOAIS**************
 		tabbedPane.addTab("Dados Pessoais",null,panelDados,"Informações do Aluno");
 		
 		JLabel lblNewLabel = new JLabel("RA");
@@ -209,6 +211,9 @@ public class GUI extends JFrame {
 		panelDados.add(btnNewButton_1_3);
 		
 		JButton btnNewButton_1_4 = new JButton("Sair");
+		
+		
+		//ABA CURSO DO ALUNO********************
 		btnNewButton_1_4.setBounds(537, 263, 89, 47);
 		panelDados.add(btnNewButton_1_4);
 		tabbedPane.addTab("Cursos",null,panelCurso,"Curso do Aluno");
@@ -286,7 +291,7 @@ public class GUI extends JFrame {
 		
 		
 		
-		
+		//ABA NOTAS E FALTAS*****************
 		tabbedPane.addTab("Notas e Faltas",null,panelNotasFaltas,"Notas e faltas do aluno");
 		JLabel lblRa = new JLabel("RA");
 		lblRa.setFont(new Font("Dialog", Font.PLAIN, 18));
@@ -367,6 +372,8 @@ public class GUI extends JFrame {
 		txtFaltas.setBounds(445, 186, 102, 20);
 		panelNotasFaltas.add(txtFaltas);
 		
+		
+		//ABA BOLETIM***********************
 		tabbedPane.addTab("Boletim",null,panelBoletim,"Boletim Completo");
 		
 		
