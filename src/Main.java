@@ -1,3 +1,4 @@
+
 import java.sql.*;
 
 import util.ConnectionFactory;
@@ -20,14 +21,7 @@ public class Main {
 			System.out.println("Falha na conexão: "+e.getMessage());
 		}
 			
-				
-				
-			
-			
-			
-			
 		}
-
 	}
 
 

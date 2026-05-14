@@ -7,7 +7,7 @@ public class ConnectionFactory {
 		
 		try {
 		Class.forName("com.mysql.jdbc.Driver");
-		String url="jdbc:mysql://localhost:3306/aluno_academico";
+		String url = "jdbc:mysql://localhost:3306/dbacademico?useSSL=false&serverTimezone=UTC";
 		String login="root";
 		String senha="";
 		
