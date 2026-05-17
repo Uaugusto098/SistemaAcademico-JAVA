@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 14/05/2026 às 03:09
+-- Tempo de geração: 18/05/2026 às 00:49
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -52,6 +52,57 @@ CREATE TABLE `tbcurso` (
   `periodo` varchar(20) DEFAULT NULL,
   `campus` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `tbcurso`
+--
+
+INSERT INTO `tbcurso` (`codCurso`, `nomeCurso`, `periodo`, `campus`) VALUES
+(1, 'Analise e Desenvolvimento de Sistemas', 'Matutino', 'Guarulhos'),
+(2, 'Analise e Desenvolvimento de Sistemas', 'Vespertino', 'Guarulhos'),
+(3, 'Analise e Desenvolvimento de Sistemas', 'Noturno', 'Guarulhos'),
+(4, 'Analise e Desenvolvimento de Sistemas', 'Matutino', 'Itaquera'),
+(5, 'Analise e Desenvolvimento de Sistemas', 'Vespertino', 'Itaquera'),
+(6, 'Analise e Desenvolvimento de Sistemas', 'Noturno', 'Itaquera'),
+(7, 'Analise e Desenvolvimento de Sistemas', 'Matutino', 'Ferraz de Vasconcelos'),
+(8, 'Analise e Desenvolvimento de Sistemas', 'Vespertino', 'Ferraz de Vasconcelos'),
+(9, 'Analise e Desenvolvimento de Sistemas', 'Noturno', 'Ferraz de Vasconcelos'),
+(10, 'Comercio Exterior', 'Matutino', 'Guarulhos'),
+(11, 'Comercio Exterior', 'Vespertino', 'Guarulhos'),
+(12, 'Comercio Exterior', 'Noturno', 'Guarulhos'),
+(13, 'Comercio Exterior', 'Matutino', 'Itaquera'),
+(14, 'Comercio Exterior', 'Vespertino', 'Itaquera'),
+(15, 'Comercio Exterior', 'Noturno', 'Itaquera'),
+(16, 'Comercio Exterior', 'Matutino', 'Ferraz de Vasconcelos'),
+(17, 'Comercio Exterior', 'Vespertino', 'Ferraz de Vasconcelos'),
+(18, 'Comercio Exterior', 'Noturno', 'Ferraz de Vasconcelos'),
+(19, 'Logistica', 'Matutino', 'Guarulhos'),
+(20, 'Logistica', 'Vespertino', 'Guarulhos'),
+(21, 'Logistica', 'Noturno', 'Guarulhos'),
+(22, 'Logistica', 'Matutino', 'Itaquera'),
+(23, 'Logistica', 'Vespertino', 'Itaquera'),
+(24, 'Logistica', 'Noturno', 'Itaquera'),
+(25, 'Logistica', 'Matutino', 'Ferraz de Vasconcelos'),
+(26, 'Logistica', 'Vespertino', 'Ferraz de Vasconcelos'),
+(27, 'Logistica', 'Noturno', 'Ferraz de Vasconcelos'),
+(28, 'Gestao Empresarial', 'Matutino', 'Guarulhos'),
+(29, 'Gestao Empresarial', 'Vespertino', 'Guarulhos'),
+(30, 'Gestao Empresarial', 'Noturno', 'Guarulhos'),
+(31, 'Gestao Empresarial', 'Matutino', 'Itaquera'),
+(32, 'Gestao Empresarial', 'Vespertino', 'Itaquera'),
+(33, 'Gestao Empresarial', 'Noturno', 'Itaquera'),
+(34, 'Gestao Empresarial', 'Matutino', 'Ferraz de Vasconcelos'),
+(35, 'Gestao Empresarial', 'Vespertino', 'Ferraz de Vasconcelos'),
+(36, 'Gestao Empresarial', 'Noturno', 'Ferraz de Vasconcelos'),
+(37, 'Logistica Aeroportuaria', 'Matutino', 'Guarulhos'),
+(38, 'Logistica Aeroportuaria', 'Vespertino', 'Guarulhos'),
+(39, 'Logistica Aeroportuaria', 'Noturno', 'Guarulhos'),
+(40, 'Logistica Aeroportuaria', 'Matutino', 'Itaquera'),
+(41, 'Logistica Aeroportuaria', 'Vespertino', 'Itaquera'),
+(42, 'Logistica Aeroportuaria', 'Noturno', 'Itaquera'),
+(43, 'Logistica Aeroportuaria', 'Matutino', 'Ferraz de Vasconcelos'),
+(44, 'Logistica Aeroportuaria', 'Vespertino', 'Ferraz de Vasconcelos'),
+(45, 'Logistica Aeroportuaria', 'Noturno', 'Ferraz de Vasconcelos');
 
 -- --------------------------------------------------------
 
@@ -118,7 +169,7 @@ ALTER TABLE `tbdisciplinas`
 -- AUTO_INCREMENT de tabela `tbcurso`
 --
 ALTER TABLE `tbcurso`
-  MODIFY `codCurso` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `codCurso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT de tabela `tbdesempenho`
