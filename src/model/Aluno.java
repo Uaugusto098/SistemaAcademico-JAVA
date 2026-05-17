@@ -1,6 +1,7 @@
 package model;
 
-import java.util.Date;
+import java.sql.*;
+
 
 public class Aluno {
 	private String nome;
@@ -11,13 +12,14 @@ public class Aluno {
 	private String municipio;
 	private String uf;
 	private String codCurso;
-	
+	private String endereco;
+	private String celular;
 	public Aluno() {
 		
 	}
 	
 	public Aluno(String nome, String ra, String cpf, Date dataNasc, String email, String municipio, String uf,
-			String codCurso) {
+			String codCurso,String endereco,String celular) {
 		super();
 		this.nome = nome;
 		this.ra = ra;
@@ -27,6 +29,9 @@ public class Aluno {
 		this.municipio = municipio;
 		this.uf = uf;
 		this.codCurso = codCurso;
+		this.endereco = endereco;
+		this.celular = celular;
+		
 	}
 	
 
@@ -51,6 +56,22 @@ public class Aluno {
 	public Date getDataNasc() {
 		return dataNasc;
 	}
+	public String getEndereco() {
+		return endereco;
+	}
+
+	public void setEndereco(String endereco) {
+		this.endereco = endereco;
+	}
+
+	public String getCelular() {
+		return celular;
+	}
+
+	public void setCelular(String celular) {
+		this.celular = celular;
+	}
+
 	public void setDataNasc(Date dataNasc) {
 		this.dataNasc = dataNasc;
 	}
