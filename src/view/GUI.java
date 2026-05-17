@@ -5,9 +5,11 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.MaskFormatter;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 
@@ -30,6 +32,22 @@ import javax.swing.JSeparator;
 import javax.swing.JScrollBar;
 import javax.swing.JToggleButton;
 import javax.swing.ButtonGroup;
+import javax.swing.KeyStroke;
+import java.awt.event.KeyEvent;
+import java.awt.event.InputEvent;
+import javax.swing.JFormattedTextField;
+
+import javax.swing.ImageIcon;
+import java.awt.Color;
+import javax.swing.SwingConstants;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.BorderFactory;
+
+// Importações do modelo do grupo
+import model.Aluno;
+import model.Desempenho;
 
 public class GUI extends JFrame {
 
@@ -37,10 +55,8 @@ public class GUI extends JFrame {
 	private JPanel contentPane;
 	private JTextField textField;
 	private JTextField textField_1;
-	private JTextField textField_2;
 	private JTextField textField_3;
 	private JTextField textField_4;
-	private JTextField textField_5;
 	private JTextField textField_6;
 	private JTextField textField_7;
 	private JTextField txtRaNotas;
@@ -48,6 +64,13 @@ public class GUI extends JFrame {
 	private JTextField txtCursoNotas;
 	private JTextField txtFaltas;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
+	
+	// Componentes globais da aba Boletim
+	private JLabel lblRgmBoletim;
+	private JLabel lblNomeBoletim;
+	private JLabel lblCursoBoletim;
+	private JTable tabelaBoletim;
+	private DefaultTableModel modeloTabelaBoletim;
 
 	/**
 	 * Launch the application.
@@ -68,9 +91,7 @@ public class GUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public GUI() {
-		
-		
+	public GUI() throws Exception {
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1169, 627);
@@ -83,7 +104,6 @@ public class GUI extends JFrame {
 		tabbedPane.setBounds(235, 117, 687,349);
 		contentPane.add(tabbedPane);
 		
-		
 		//Instanciando os paineis
 		JPanel panelDados = new JPanel();
 		JPanel panelCurso = new JPanel();
@@ -95,8 +115,6 @@ public class GUI extends JFrame {
 		panelCurso.setLayout(null);
 		panelNotasFaltas.setLayout(null);
 		panelBoletim.setLayout(null);
-		
-		
 		
 		//ABA DADOS PESSOAIS**************
 		tabbedPane.addTab("Dados Pessoais",null,panelDados,"Informações do Aluno");
@@ -126,11 +144,6 @@ public class GUI extends JFrame {
 		textField_1.setBounds(77, 64, 158, 20);
 		panelDados.add(textField_1);
 		
-		textField_2 = new JTextField();
-		textField_2.setColumns(10);
-		textField_2.setBounds(193, 114, 158, 20);
-		panelDados.add(textField_2);
-		
 		JLabel lblNewLabel_1_1_1 = new JLabel("Email");
 		lblNewLabel_1_1_1.setFont(new Font("Dubai", Font.PLAIN, 18));
 		lblNewLabel_1_1_1.setBounds(21, 174, 57, 14);
@@ -155,11 +168,6 @@ public class GUI extends JFrame {
 		lblNewLabel_1_1_2.setFont(new Font("Dubai", Font.PLAIN, 18));
 		lblNewLabel_1_1_2.setBounds(370, 24, 46, 14);
 		panelDados.add(lblNewLabel_1_1_2);
-		
-		textField_5 = new JTextField();
-		textField_5.setColumns(10);
-		textField_5.setBounds(414, 22, 158, 20);
-		panelDados.add(textField_5);
 		
 		JSeparator separator = new JSeparator();
 		separator.setBounds(0, 149, 666, 14);
@@ -194,28 +202,47 @@ public class GUI extends JFrame {
 		textField_7.setBounds(437, 64, 158, 20);
 		panelDados.add(textField_7);
 		
-		JButton btnNewButton_1 = new JButton("Salvar");
+		JButton btnNewButton_1 = new JButton("");
+		btnNewButton_1.setVerticalAlignment(SwingConstants.BOTTOM);
+		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		btnNewButton_1.setForeground(new Color(0, 0, 0));
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnNewButton_1.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\save_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
 		btnNewButton_1.setBounds(21, 263, 89, 47);
 		panelDados.add(btnNewButton_1);
 		
-		JButton btnNewButton_1_1 = new JButton("Alterar");
-		btnNewButton_1_1.setBounds(140, 263, 89, 47);
+		JButton btnNewButton_1_1 = new JButton("");
+		btnNewButton_1_1.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\update_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
+		btnNewButton_1_1.setBounds(146, 263, 89, 47);
 		panelDados.add(btnNewButton_1_1);
 		
-		JButton btnNewButton_1_2 = new JButton("Consultar");
-		btnNewButton_1_2.setBounds(270, 263, 89, 47);
+		JButton btnNewButton_1_2 = new JButton("");
+		btnNewButton_1_2.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\search_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
+		btnNewButton_1_2.setBounds(277, 263, 83, 47);
 		panelDados.add(btnNewButton_1_2);
 		
-		JButton btnNewButton_1_3 = new JButton("Excluir");
+		JButton btnNewButton_1_3 = new JButton("");
+		btnNewButton_1_3.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\delete_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
 		btnNewButton_1_3.setBounds(400, 263, 89, 47);
 		panelDados.add(btnNewButton_1_3);
 		
-		JButton btnNewButton_1_4 = new JButton("Sair");
-		
+		JButton btnNewButton_1_4 = new JButton("");
+		btnNewButton_1_4.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\exit_to_app_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
 		
 		//ABA CURSO DO ALUNO********************
 		btnNewButton_1_4.setBounds(537, 263, 89, 47);
 		panelDados.add(btnNewButton_1_4);
+		
+		JFormattedTextField formattedTextField = new JFormattedTextField(new MaskFormatter("##/##/####"));
+		formattedTextField.setBounds(181, 112, 65, 20);
+		panelDados.add(formattedTextField);
+		
+		JFormattedTextField formattedTextField_1 = new JFormattedTextField(new MaskFormatter("###.###.###-##"));
+		formattedTextField_1.setBounds(410, 22, 109, 20);
+		panelDados.add(formattedTextField_1);
 		tabbedPane.addTab("Cursos",null,panelCurso,"Curso do Aluno");
 		
 		JLabel lblCurso = new JLabel("Curso");
@@ -262,23 +289,28 @@ public class GUI extends JFrame {
 		rdbtnNoturno.setBounds(278, 109, 74, 23);
 		panelCurso.add(rdbtnNoturno);
 		
-		JButton btnSalvarNotas_1 = new JButton("Salvar");
+		JButton btnSalvarNotas_1 = new JButton("");
+		btnSalvarNotas_1.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\save_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
 		btnSalvarNotas_1.setBounds(32, 265, 89, 45);
 		panelCurso.add(btnSalvarNotas_1);
 		
-		JButton btnAlterarNotas_1 = new JButton("Alterar");
+		JButton btnAlterarNotas_1 = new JButton("");
+		btnAlterarNotas_1.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\update_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
 		btnAlterarNotas_1.setBounds(158, 265, 89, 45);
 		panelCurso.add(btnAlterarNotas_1);
 		
-		JButton btnConsultarNotas_1 = new JButton("Consultar");
+		JButton btnConsultarNotas_1 = new JButton("");
+		btnConsultarNotas_1.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\search_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
 		btnConsultarNotas_1.setBounds(289, 265, 89, 45);
 		panelCurso.add(btnConsultarNotas_1);
 		
-		JButton btnExcluirNotas_1 = new JButton("Excluir");
+		JButton btnExcluirNotas_1 = new JButton("");
+		btnExcluirNotas_1.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\delete_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
 		btnExcluirNotas_1.setBounds(419, 265, 89, 45);
 		panelCurso.add(btnExcluirNotas_1);
 		
-		JButton btnSairNotas_1 = new JButton("Sair");
+		JButton btnSairNotas_1 = new JButton("");
+		btnSairNotas_1.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\exit_to_app_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
 		btnSairNotas_1.setBounds(549, 265, 89, 45);
 		panelCurso.add(btnSairNotas_1);
 		
@@ -287,9 +319,6 @@ public class GUI extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			}
 		});
-		
-		
-		
 		
 		//ABA NOTAS E FALTAS*****************
 		tabbedPane.addTab("Notas e Faltas",null,panelNotasFaltas,"Notas e faltas do aluno");
@@ -330,23 +359,28 @@ public class GUI extends JFrame {
 		lblFaltas.setBounds(389, 181, 53, 24);
 		panelNotasFaltas.add(lblFaltas);
 		
-		JButton btnExcluirNotas = new JButton("Excluir");
+		JButton btnExcluirNotas = new JButton("");
+		btnExcluirNotas.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\delete_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
 		btnExcluirNotas.setBounds(413, 268, 89, 45);
 		panelNotasFaltas.add(btnExcluirNotas);
 		
-		JButton btnSairNotas = new JButton("Sair");
+		JButton btnSairNotas = new JButton("");
+		btnSairNotas.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\exit_to_app_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
 		btnSairNotas.setBounds(543, 268, 89, 45);
 		panelNotasFaltas.add(btnSairNotas);
 		
-		JButton btnConsultarNotas = new JButton("Consultar");
+		JButton btnConsultarNotas = new JButton("");
+		btnConsultarNotas.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\search_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
 		btnConsultarNotas.setBounds(283, 268, 89, 45);
 		panelNotasFaltas.add(btnConsultarNotas);
 		
-		JButton btnAlterarNotas = new JButton("Alterar");
+		JButton btnAlterarNotas = new JButton("");
+		btnAlterarNotas.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\update_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
 		btnAlterarNotas.setBounds(152, 268, 89, 45);
 		panelNotasFaltas.add(btnAlterarNotas);
 		
-		JButton btnSalvarNotas = new JButton("Salvar");
+		JButton btnSalvarNotas = new JButton("");
+		btnSalvarNotas.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\save_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
 		btnSalvarNotas.setBounds(26, 268, 89, 45);
 		panelNotasFaltas.add(btnSalvarNotas);
 		
@@ -372,16 +406,165 @@ public class GUI extends JFrame {
 		txtFaltas.setBounds(445, 186, 102, 20);
 		panelNotasFaltas.add(txtFaltas);
 		
-		
 		//ABA BOLETIM***********************
 		tabbedPane.addTab("Boletim",null,panelBoletim,"Boletim Completo");
 		
+		// Painel contêiner superior para os dados básicos do Aluno
+		JPanel painelFichaAluno = new JPanel();
+		painelFichaAluno.setLayout(null);
+		painelFichaAluno.setBorder(BorderFactory.createTitledBorder("Informações Acadêmicas"));
+		painelFichaAluno.setBounds(10, 11, 662, 85);
+		panelBoletim.add(painelFichaAluno);
+		
+		lblRgmBoletim = new JLabel("RA: ");
+		lblRgmBoletim.setFont(new Font("Dubai", Font.BOLD, 14));
+		lblRgmBoletim.setBounds(15, 20, 600, 20);
+		painelFichaAluno.add(lblRgmBoletim);
+		
+		lblNomeBoletim = new JLabel("Nome: ");
+		lblNomeBoletim.setFont(new Font("Dubai", Font.BOLD, 14));
+		lblNomeBoletim.setBounds(15, 40, 600, 20);
+		painelFichaAluno.add(lblNomeBoletim);
+		
+		lblCursoBoletim = new JLabel("Curso: ");
+		lblCursoBoletim.setFont(new Font("Dubai", Font.BOLD, 14));
+		lblCursoBoletim.setBounds(15, 60, 600, 20);
+		painelFichaAluno.add(lblCursoBoletim);
+		
+		// Definição da tabela e bloqueio de edição manual nas células pelo usuário
+		String[] colunasBoletim = {"Disciplina / Matéria", "Nota Final", "Faltas Totais"};
+		modeloTabelaBoletim = new DefaultTableModel(colunasBoletim, 0) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		
+		tabelaBoletim = new JTable(modeloTabelaBoletim);
+		tabelaBoletim.setRowHeight(22);
+		tabelaBoletim.setFillsViewportHeight(true);
+		
+		// Alinhamento centralizado para as colunas de Notas e Faltas
+		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+		tabelaBoletim.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+		tabelaBoletim.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
+		
+		// Barra de rolagem para a tabela acoplada via posicionamento absoluto
+		JScrollPane scrollTabelaBoletim = new JScrollPane(tabelaBoletim);
+		scrollTabelaBoletim.setBounds(10, 107, 662, 203);
+		panelBoletim.add(scrollTabelaBoletim);
+		
+		// Ouvinte que intercepta o momento exato em que a aba "Boletim" ganha foco
+		tabbedPane.addChangeListener(e -> {
+			if (tabbedPane.getSelectedIndex() == 3) { // Índice 3 é a aba Boletim
+				String raDigitado = txtRaNotas.getText().trim();
+				
+				if (!raDigitado.isEmpty()) {
+					
+					// O AlunoDAO será chamado aqui para alimentar a tabela de forma automática.
+					/*
+					try {
+						dao.AlunoDAO daoAluno = new dao.AlunoDAO();
+						java.util.List<Desempenho> notas = daoAluno.buscarBoletim(raDigitado);
+						atualizarInterfaceBoletim(notas);
+					} catch(Exception ex) {
+						ex.printStackTrace();
+					}
+					*/
+				}
+			}
+		});
 		
 		contentPane.add(tabbedPane);
 		
+		JMenuBar menuBar = new JMenuBar();
+		menuBar.setBounds(0, 0, 1121, 22);
+		contentPane.add(menuBar);
 		
+		JMenu mnNewMenu = new JMenu("Arquivo");
+		menuBar.add(mnNewMenu);
+		
+		JMenuItem mntmNewMenuItem = new JMenuItem("Salvar");
+		mntmNewMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK));
+		mnNewMenu.add(mntmNewMenuItem);
+		
+		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Consultar");
+		mnNewMenu.add(mntmNewMenuItem_1);
+		
+		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Alterar");
+		mnNewMenu.add(mntmNewMenuItem_2);
+		
+		JSeparator separator_1 = new JSeparator();
+		mnNewMenu.add(separator_1);
+		
+		JMenuItem mntmNewMenuItem_3 = new JMenuItem("Sair");
+		mntmNewMenuItem_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		mntmNewMenuItem_3.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+		mnNewMenu.add(mntmNewMenuItem_3);
+		
+		JMenu mnNewMenu_1 = new JMenu("Editar");
+		menuBar.add(mnNewMenu_1);
+		
+		JMenuItem mntmNewMenuItem_4 = new JMenuItem("Alterar Fonte");
+		mnNewMenu_1.add(mntmNewMenuItem_4);
+		
+		JSeparator separator_2 = new JSeparator();
+		mnNewMenu_1.add(separator_2);
+		
+		JMenuItem mntmNewMenuItem_5 = new JMenuItem("Formato");
+		mnNewMenu_1.add(mntmNewMenuItem_5);
+		
+		JMenu mnNewMenu_2 = new JMenu("Ajudar");
+		menuBar.add(mnNewMenu_2);
+		
+		JMenuItem mntmNewMenuItem_6 = new JMenuItem("Sobre");
+		mntmNewMenuItem_6.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null, "Informações do Menu");
+			}
+		});
+		mntmNewMenuItem_6.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_DOWN_MASK));
+		mnNewMenu_2.add(mntmNewMenuItem_6);
 
 	}
+	
+	/**
+	 * Função responsável por receber os dados processados do banco e atualizar a interface do Boletim.
+	 */
+	public void atualizarInterfaceBoletim(java.util.List<Desempenho> listaDesempenho) {
+		if (listaDesempenho == null || listaDesempenho.isEmpty()) {
+			return;
+		}
+		
+		modeloTabelaBoletim.setRowCount(0); 
+		
+		try {
+			// Usando a herança da classe Desempenho (extends Aluno) para preencher a ficha
+			Desempenho primeiroRegistro = listaDesempenho.get(0);
+			
+			lblRgmBoletim.setText("RA: " + primeiroRegistro.getRa()); 
+			lblNomeBoletim.setText("Nome: " + primeiroRegistro.getNome());
+			lblCursoBoletim.setText("Curso: " + primeiroRegistro.getCodCurso());
+			
+			// Varre a lista populando as linhas da tabela
+			for (Desempenho d : listaDesempenho) {
+				modeloTabelaBoletim.addRow(new Object[]{
+					d.getCodDisciplina(), 
+					d.getNota(),       
+					d.getFaltas()      
+				});
+			}
+			
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(this, "Erro ao popular a tabela de boletim: " + ex.getMessage());
+		}
+	}
+
 	private static void addPopup(Component component, final JPopupMenu popup) {
 		component.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
