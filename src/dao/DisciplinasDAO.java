@@ -10,14 +10,14 @@ import java.util.List;
 import util.ConnectionFactory;
 import model.Aluno;
 
-public class AlunoDAO {
+public class DisciplinasDAO {
 	
 	private Connection conn;
 	private PreparedStatement ps;
 	private ResultSet rs;
 	private Aluno aluno; 
 	
-	public AlunoDAO() {
+	public DisciplinasDAO() {
 		
 	}
 
@@ -170,3 +170,4 @@ public class AlunoDAO {
 		}
 	}
 }
+
