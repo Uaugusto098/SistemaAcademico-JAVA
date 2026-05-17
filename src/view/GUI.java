@@ -291,27 +291,27 @@ public class GUI extends JFrame {
 		panelCurso.add(rdbtnNoturno);
 		
 		JButton btnSalvarNotas_1 = new JButton("");
-		btnSalvarNotas_1.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\save_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
+		btnSalvarNotas_1.setIcon(new ImageIcon(GUI.class.getResource("/images/save_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
 		btnSalvarNotas_1.setBounds(32, 265, 89, 45);
 		panelCurso.add(btnSalvarNotas_1);
 		
 		JButton btnAlterarNotas_1 = new JButton("");
-		btnAlterarNotas_1.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\update_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
+		btnAlterarNotas_1.setIcon(new ImageIcon(GUI.class.getResource("/images/update_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
 		btnAlterarNotas_1.setBounds(158, 265, 89, 45);
 		panelCurso.add(btnAlterarNotas_1);
 		
 		JButton btnConsultarNotas_1 = new JButton("");
-		btnConsultarNotas_1.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\search_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
+		btnConsultarNotas_1.setIcon(new ImageIcon(GUI.class.getResource("/images/search_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
 		btnConsultarNotas_1.setBounds(289, 265, 89, 45);
 		panelCurso.add(btnConsultarNotas_1);
 		
 		JButton btnExcluirNotas_1 = new JButton("");
-		btnExcluirNotas_1.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\delete_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
+		btnExcluirNotas_1.setIcon(new ImageIcon(GUI.class.getResource("/images/delete_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
 		btnExcluirNotas_1.setBounds(419, 265, 89, 45);
 		panelCurso.add(btnExcluirNotas_1);
 		
 		JButton btnSairNotas_1 = new JButton("");
-		btnSairNotas_1.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\exit_to_app_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
+		btnSairNotas_1.setIcon(new ImageIcon(GUI.class.getResource("/images/exit_to_app_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
 		btnSairNotas_1.setBounds(549, 265, 89, 45);
 		panelCurso.add(btnSairNotas_1);
 		
@@ -361,27 +361,27 @@ public class GUI extends JFrame {
 		panelNotasFaltas.add(lblFaltas);
 		
 		JButton btnExcluirNotas = new JButton("");
-		btnExcluirNotas.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\delete_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
+		btnExcluirNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/delete_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
 		btnExcluirNotas.setBounds(413, 268, 89, 45);
 		panelNotasFaltas.add(btnExcluirNotas);
 		
 		JButton btnSairNotas = new JButton("");
-		btnSairNotas.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\exit_to_app_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
+		btnSairNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/exit_to_app_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
 		btnSairNotas.setBounds(543, 268, 89, 45);
 		panelNotasFaltas.add(btnSairNotas);
 		
 		JButton btnConsultarNotas = new JButton("");
-		btnConsultarNotas.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\search_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
+		btnConsultarNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/search_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
 		btnConsultarNotas.setBounds(283, 268, 89, 45);
 		panelNotasFaltas.add(btnConsultarNotas);
 		
 		JButton btnAlterarNotas = new JButton("");
-		btnAlterarNotas.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\update_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
+		btnAlterarNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/update_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
 		btnAlterarNotas.setBounds(152, 268, 89, 45);
 		panelNotasFaltas.add(btnAlterarNotas);
 		
 		JButton btnSalvarNotas = new JButton("");
-		btnSalvarNotas.setIcon(new ImageIcon("C:\\Users\\arthu\\Downloads\\save_38dp_000000_FILL0_wght400_GRAD0_opsz40.png"));
+		btnSalvarNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/save_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
 		btnSalvarNotas.setBounds(26, 268, 89, 45);
 		panelNotasFaltas.add(btnSalvarNotas);
 		
