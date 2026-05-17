@@ -213,41 +213,6 @@ public class GUI extends JFrame {
 		textField_7.setBounds(437, 64, 158, 20);
 		panelDados.add(textField_7);
 		
-		JButton btnNewButton_1 = new JButton("");
-		btnNewButton_1.setVerticalAlignment(SwingConstants.BOTTOM);
-		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		btnNewButton_1.setForeground(new Color(0, 0, 0));
-		btnNewButton_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		btnNewButton_1.setIcon(new ImageIcon(GUI.class.getResource("/images/save_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
-		btnNewButton_1.setBounds(21, 263, 89, 47);
-		panelDados.add(btnNewButton_1);
-		
-		JButton btnNewButton_1_1 = new JButton("");
-		// Botão Update (btnNewButton_1_1)
-		btnNewButton_1_1.setIcon(new ImageIcon(GUI.class.getResource("/images/update_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
-		btnNewButton_1_1.setBounds(146, 263, 89, 47);
-		panelDados.add(btnNewButton_1_1);
-		
-		JButton btnNewButton_1_2 = new JButton("");
-		btnNewButton_1_2.setIcon(new ImageIcon(GUI.class.getResource("/images/search_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
-		btnNewButton_1_2.setBounds(277, 263, 83, 47);
-		panelDados.add(btnNewButton_1_2);
-		
-		JButton btnNewButton_1_3 = new JButton("");
-		btnNewButton_1_3.setIcon(new ImageIcon(GUI.class.getResource("/images/delete_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
-		btnNewButton_1_3.setBounds(400, 263, 89, 47);
-		panelDados.add(btnNewButton_1_3);
-		
-		JButton btnNewButton_1_4 = new JButton("");
-		btnNewButton_1_4.setIcon(new ImageIcon(GUI.class.getResource("/images/exit_to_app_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
-		
-		//ABA CURSO DO ALUNO********************
-		btnNewButton_1_4.setBounds(537, 263, 89, 47);
-		panelDados.add(btnNewButton_1_4);
-		
 		try {
 			JFormattedTextField formattedTextField = new JFormattedTextField(new MaskFormatter("##/##/####"));
 			formattedTextField.setBounds(181, 112, 65, 20);
