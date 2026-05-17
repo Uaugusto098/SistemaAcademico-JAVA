@@ -598,7 +598,7 @@ public class GUI extends JFrame {
 		menuBar.setBounds(0, 0, 1121, 22);
 		contentPane.add(menuBar);
 		
-		JMenu mnNewMenu = new JMenu("Arquivo");
+		JMenu mnNewMenu = new JMenu("Aluno");
 		menuBar.add(mnNewMenu);
 		
 		JMenuItem mntmNewMenuItem = new JMenuItem("Salvar");
@@ -610,6 +610,9 @@ public class GUI extends JFrame {
 		
 		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Alterar");
 		mnNewMenu.add(mntmNewMenuItem_2);
+		
+		JMenuItem mntmNewMenuItem_7 = new JMenuItem("Excluir");
+		mnNewMenu.add(mntmNewMenuItem_7);
 		
 		JSeparator separator_1 = new JSeparator();
 		mnNewMenu.add(separator_1);
@@ -623,19 +626,22 @@ public class GUI extends JFrame {
 		mntmNewMenuItem_3.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
 		mnNewMenu.add(mntmNewMenuItem_3);
 		
-		JMenu mnNewMenu_1 = new JMenu("Editar");
+		JMenu mnNewMenu_1 = new JMenu("Notas e faltas");
 		menuBar.add(mnNewMenu_1);
 		
-		JMenuItem mntmNewMenuItem_4 = new JMenuItem("Alterar Fonte");
-		mnNewMenu_1.add(mntmNewMenuItem_4);
+		JMenuItem mntmNewMenuItem_8 = new JMenuItem("Salvar ");
+		mnNewMenu_1.add(mntmNewMenuItem_8);
 		
-		JSeparator separator_2 = new JSeparator();
-		mnNewMenu_1.add(separator_2);
+		JMenuItem mntmNewMenuItem_9 = new JMenuItem("Alterar");
+		mnNewMenu_1.add(mntmNewMenuItem_9);
 		
-		JMenuItem mntmNewMenuItem_5 = new JMenuItem("Formato");
+		JMenuItem mntmNewMenuItem_10 = new JMenuItem("Excluir");
+		mnNewMenu_1.add(mntmNewMenuItem_10);
+		
+		JMenuItem mntmNewMenuItem_5 = new JMenuItem("Consulte");
 		mnNewMenu_1.add(mntmNewMenuItem_5);
 		
-		JMenu mnNewMenu_2 = new JMenu("Ajudar");
+		JMenu mnNewMenu_2 = new JMenu("Ajuda");
 		menuBar.add(mnNewMenu_2);
 		
 		JMenuItem mntmNewMenuItem_6 = new JMenuItem("Sobre");
@@ -725,5 +731,4 @@ public class GUI extends JFrame {
 			}
 		});
 	}
-	
 }
