@@ -331,7 +331,7 @@ public class GUI extends JFrame {
 
 		            JOptionPane.showMessageDialog(null,
 		                "Curso vinculado com sucesso!\n\n" +
-		                "RA: "      + ra               + "\n" +
+		                "RA: "      + ra              + "\n" +
 		                "Curso: "   + cursoSelecionado  + "\n" +
 		                "Campus: "  + campusSelecionado  + "\n" +
 		                "Período: " + periodoSelecionado + "\n" +
