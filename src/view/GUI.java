@@ -2,6 +2,7 @@ package view;
 
 import java.awt.EventQueue;
 
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -45,6 +46,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.BorderFactory;
 
+import java.util.List;
+import javax.swing.JOptionPane;
+import model.Curso;
+import dao.CursoDAO;
+
 // Importações do modelo do grupo
 import model.Aluno;
 import model.Desempenho;
@@ -63,6 +69,11 @@ public class GUI extends JFrame {
 	private JTextField txtNomeNotas;
 	private JTextField txtCursoNotas;
 	private JTextField txtFaltas;
+	private JComboBox cmbCursos;
+	private JComboBox cmbCampus;
+	private JRadioButton rdbtnMatutino;
+	private JRadioButton rdbtnVespertino;
+	private JRadioButton rdbtnNoturno;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	
 	// Componentes globais da aba Boletim
@@ -237,6 +248,18 @@ public class GUI extends JFrame {
 		btnNewButton_1_4.setBounds(537, 263, 89, 47);
 		panelDados.add(btnNewButton_1_4);
 		
+		try {
+			JFormattedTextField formattedTextField = new JFormattedTextField(new MaskFormatter("##/##/####"));
+			formattedTextField.setBounds(181, 112, 65, 20);
+			panelDados.add(formattedTextField);
+			
+			JFormattedTextField formattedTextField_1 = new JFormattedTextField(new MaskFormatter("###.###.###-##"));
+			formattedTextField_1.setBounds(410, 22, 109, 20);
+			panelDados.add(formattedTextField_1);
+		} catch (Exception e) {
+			System.err.println("Erro ao inicializar formatação de máscaras: " + e.getMessage());
+		}
+		
 		JFormattedTextField formattedTextField = new JFormattedTextField(new MaskFormatter("##/##/####"));
 		formattedTextField.setBounds(181, 112, 65, 20);
 		panelDados.add(formattedTextField);
@@ -248,72 +271,199 @@ public class GUI extends JFrame {
 		
 		JLabel lblCurso = new JLabel("Curso");
 		lblCurso.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblCurso.setBounds(10, 31, 46, 14);
+		lblCurso.setBounds(10, 31, 76, 14);
 		panelCurso.add(lblCurso);
 		
 		JLabel lblCampus = new JLabel("Campus");
 		lblCampus.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblCampus.setBounds(10, 73, 58, 14);
+		lblCampus.setBounds(10, 64, 76, 28);
 		panelCurso.add(lblCampus);
 		
 		JLabel lblPeriodo = new JLabel("Período");
 		lblPeriodo.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblPeriodo.setBounds(10, 112, 58, 14);
+		lblPeriodo.setBounds(10, 112, 76, 14);
 		panelCurso.add(lblPeriodo);
 		
-		JComboBox cmbCursos = new JComboBox();
+		cmbCursos = new JComboBox();
 		cmbCursos.setBounds(96, 28, 286, 22);
 		panelCurso.add(cmbCursos);
 		
-		JComboBox cmbCampus = new JComboBox();
+		cmbCampus = new JComboBox();
 		cmbCampus.setBounds(96, 70, 286, 22);
 		panelCurso.add(cmbCampus);
 		
-		JRadioButton rdbtnMatutino = new JRadioButton("Matutino");
+		// Remova o "JRadioButton" do início destas linhas:
+		rdbtnMatutino = new JRadioButton("Matutino");
 		buttonGroup.add(rdbtnMatutino);
 		rdbtnMatutino.setFont(new Font("Dubai", Font.PLAIN, 14));
-		buttonGroup.add(rdbtnMatutino);
 		rdbtnMatutino.setBounds(106, 109, 79, 23);
 		panelCurso.add(rdbtnMatutino);
 		
-		JRadioButton rdbtnVespertino = new JRadioButton("Vespertino");
+		rdbtnVespertino = new JRadioButton("Vespertino");
 		buttonGroup.add(rdbtnVespertino);
 		rdbtnVespertino.setFont(new Font("Dubai", Font.PLAIN, 14));
-		buttonGroup.add(rdbtnVespertino);
 		rdbtnVespertino.setBounds(187, 109, 89, 23);
 		panelCurso.add(rdbtnVespertino);
 		
-		JRadioButton rdbtnNoturno = new JRadioButton("Noturno");
+		rdbtnNoturno = new JRadioButton("Noturno");
 		buttonGroup.add(rdbtnNoturno);
 		rdbtnNoturno.setFont(new Font("Dubai", Font.PLAIN, 14));
-		buttonGroup.add(rdbtnNoturno);
 		rdbtnNoturno.setBounds(278, 109, 74, 23);
 		panelCurso.add(rdbtnNoturno);
+
 		
-		JButton btnSalvarNotas_1 = new JButton("");
-		btnSalvarNotas_1.setIcon(new ImageIcon(GUI.class.getResource("/images/save_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
-		btnSalvarNotas_1.setBounds(32, 265, 89, 45);
-		panelCurso.add(btnSalvarNotas_1);
+		JButton btnSalvarCursos= new JButton("");
+		btnSalvarCursos.setIcon(new ImageIcon(GUI.class.getResource("/images/save_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
+		btnSalvarCursos.setBounds(32, 265, 89, 45);
+		panelCurso.add(btnSalvarCursos);
 		
-		JButton btnAlterarNotas_1 = new JButton("");
-		btnAlterarNotas_1.setIcon(new ImageIcon(GUI.class.getResource("/images/update_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
-		btnAlterarNotas_1.setBounds(158, 265, 89, 45);
-		panelCurso.add(btnAlterarNotas_1);
+		btnSalvarCursos.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        try {
+		            //Valida o RA
+		            String ra = textField.getText().trim();
+		            if (ra.isEmpty()) {
+		                JOptionPane.showMessageDialog(null,
+		                    "Informe o RA do aluno na aba 'Dados Pessoais' antes de salvar o curso.");
+		                return;
+		            }
+
+		            //Valida combos
+		            if (cmbCursos.getSelectedItem() == null || cmbCampus.getSelectedItem() == null) {
+		                JOptionPane.showMessageDialog(null,
+		                    "Selecione um Curso e um Campus.");
+		                return;
+		            }
+
+		            String cursoSelecionado  = cmbCursos.getSelectedItem().toString();
+		            String campusSelecionado = cmbCampus.getSelectedItem().toString();
+
+		            //Valida período
+		            String periodoSelecionado = "";
+		            if      (rdbtnMatutino.isSelected())  periodoSelecionado = "Matutino";
+		            else if (rdbtnVespertino.isSelected()) periodoSelecionado = "Vespertino";
+		            else if (rdbtnNoturno.isSelected())    periodoSelecionado = "Noturno";
+
+		            if (periodoSelecionado.isEmpty()) {
+		                JOptionPane.showMessageDialog(null, "Selecione um Período.");
+		                return;
+		            }
+
+		            //Descobre o codCurso
+		            dao.CursoDAO cursoDAO = new dao.CursoDAO();
+		            int codCurso = cursoDAO.descobrirCodCurso(
+		                cursoSelecionado, campusSelecionado, periodoSelecionado);
+
+		            if (codCurso == 0) {
+		                JOptionPane.showMessageDialog(null,
+		                    "Combinação de Curso, Campus e Período não encontrada no sistema.");
+		                return;
+		            }
+
+		            //Salva o vínculo
+		            dao.AlunoDAO alunoDAO = new dao.AlunoDAO();
+		            alunoDAO.salvarCursoDoAluno(ra, codCurso);
+
+		            JOptionPane.showMessageDialog(null,
+		                "Curso vinculado com sucesso!\n\n" +
+		                "RA: "      + ra               + "\n" +
+		                "Curso: "   + cursoSelecionado  + "\n" +
+		                "Campus: "  + campusSelecionado  + "\n" +
+		                "Período: " + periodoSelecionado + "\n" +
+		                "ID do Curso: " + codCurso);
+
+		        } catch (Exception ex) {
+		            JOptionPane.showMessageDialog(null,
+		                "Erro ao salvar curso: " + ex.getMessage());
+		        }
+		    }
+		});
 		
-		JButton btnConsultarNotas_1 = new JButton("");
-		btnConsultarNotas_1.setIcon(new ImageIcon(GUI.class.getResource("/images/search_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
-		btnConsultarNotas_1.setBounds(289, 265, 89, 45);
-		panelCurso.add(btnConsultarNotas_1);
+		JButton btnAlterarCursos = new JButton("");
+		btnAlterarCursos.setIcon(new ImageIcon(GUI.class.getResource("/images/update_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
+		btnAlterarCursos.setBounds(158, 265, 89, 45);
+		panelCurso.add(btnAlterarCursos);
 		
-		JButton btnExcluirNotas_1 = new JButton("");
-		btnExcluirNotas_1.setIcon(new ImageIcon(GUI.class.getResource("/images/delete_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
-		btnExcluirNotas_1.setBounds(419, 265, 89, 45);
-		panelCurso.add(btnExcluirNotas_1);
+		btnAlterarCursos.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        try {
+		            //Valida o RA (vem da aba Dados Pessoais)
+		            String ra = textField.getText().trim();
+		            if (ra.isEmpty()) {
+		                JOptionPane.showMessageDialog(null,
+		                    "Informe o RA do aluno na aba 'Dados Pessoais' antes de alterar o curso.");
+		                return;
+		            }
+
+		            //Valida as seleções do combo
+		            if (cmbCursos.getSelectedItem() == null || cmbCampus.getSelectedItem() == null) {
+		                JOptionPane.showMessageDialog(null, "Selecione um Curso e um Campus.");
+		                return;
+		            }
+
+		            String cursoSelecionado  = cmbCursos.getSelectedItem().toString();
+		            String campusSelecionado = cmbCampus.getSelectedItem().toString();
+
+		            //Valida o período
+		            String periodoSelecionado = "";
+		            if      (rdbtnMatutino.isSelected())   periodoSelecionado = "Matutino";
+		            else if (rdbtnVespertino.isSelected())  periodoSelecionado = "Vespertino";
+		            else if (rdbtnNoturno.isSelected())     periodoSelecionado = "Noturno";
+
+		            if (periodoSelecionado.isEmpty()) {
+		                JOptionPane.showMessageDialog(null, "Selecione um Período.");
+		                return;
+		            }
+
+		            //Descobre o codCurso pela combinação escolhida
+		            dao.CursoDAO cursoDAO = new dao.CursoDAO();
+		            int codCurso = cursoDAO.descobrirCodCurso(
+		                cursoSelecionado, campusSelecionado, periodoSelecionado);
+
+		            if (codCurso == 0) {
+		                JOptionPane.showMessageDialog(null,
+		                    "Combinação de Curso, Campus e Período não encontrada no sistema.");
+		                return;
+		            }
+
+		            //Confirmação antes de gravar
+		            int confirmacao = JOptionPane.showConfirmDialog(null,
+		                "Confirma a alteração do curso do aluno RA " + ra + "?\n\n" +
+		                "Curso:   " + cursoSelecionado  + "\n" +
+		                "Campus:  " + campusSelecionado  + "\n" +
+		                "Período: " + periodoSelecionado,
+		                "Confirmar Alteração",
+		                JOptionPane.YES_NO_OPTION);
+
+		            if (confirmacao != JOptionPane.YES_OPTION) return;
+
+		            //Executa o UPDATE
+		            dao.AlunoDAO alunoDAO = new dao.AlunoDAO();
+		            alunoDAO.atualizarCursoAluno(ra, codCurso);
+
+		            JOptionPane.showMessageDialog(null, "Curso atualizado com sucesso!");
+
+		        } catch (Exception ex) {
+		            JOptionPane.showMessageDialog(null,
+		                "Erro ao atualizar curso: " + ex.getMessage());
+		        }
+		    }
+		});
 		
-		JButton btnSairNotas_1 = new JButton("");
-		btnSairNotas_1.setIcon(new ImageIcon(GUI.class.getResource("/images/exit_to_app_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
-		btnSairNotas_1.setBounds(549, 265, 89, 45);
-		panelCurso.add(btnSairNotas_1);
+		JButton btnConsultarCursos = new JButton("");
+		btnConsultarCursos.setIcon(new ImageIcon(GUI.class.getResource("/images/search_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
+		btnConsultarCursos.setBounds(289, 265, 89, 45);
+		panelCurso.add(btnConsultarCursos);
+		
+		JButton btnExcluirCursos = new JButton("");
+		btnExcluirCursos.setIcon(new ImageIcon(GUI.class.getResource("/images/delete_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
+		btnExcluirCursos.setBounds(419, 265, 89, 45);
+		panelCurso.add(btnExcluirCursos);
+		
+		JButton btnSairCursos = new JButton("");
+		btnSairCursos.setIcon(new ImageIcon(GUI.class.getResource("/images/exit_to_app_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
+		btnSairCursos.setBounds(549, 265, 89, 45);
+		panelCurso.add(btnSairCursos);
 		
 		JButton btnSalvar2 = new JButton("");
 		btnSalvar2.addActionListener(new ActionListener() {
@@ -531,7 +681,33 @@ public class GUI extends JFrame {
 		});
 		mntmNewMenuItem_6.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_DOWN_MASK));
 		mnNewMenu_2.add(mntmNewMenuItem_6);
-
+		
+		carregarSeletoresCurso();
+	}
+	
+	private void carregarSeletoresCurso() {
+		try {
+			dao.CursoDAO cursoDAO = new dao.CursoDAO();
+			
+			if (cmbCursos != null) cmbCursos.removeAllItems();
+			if (cmbCampus != null) cmbCampus.removeAllItems();
+			
+			java.util.List<model.Curso> listaCursos = cursoDAO.listarCursosParaCombo();
+			if (listaCursos != null) {
+				for (model.Curso c : listaCursos) {
+					cmbCursos.addItem(c.getNomeCurso()); 
+				}
+			}
+			
+			java.util.List<String> listaCampi = cursoDAO.listarCampiParaCombo();
+			if (listaCampi != null) {
+				for (String campus : listaCampi) {
+					cmbCampus.addItem(campus);
+				}
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Erro ao popular seletores: " + e.getMessage());
+		}
 	}
 	
 	/**
@@ -565,6 +741,7 @@ public class GUI extends JFrame {
 			JOptionPane.showMessageDialog(this, "Erro ao popular a tabela de boletim: " + ex.getMessage());
 		}
 	}
+	
 
 	private static void addPopup(Component component, final JPopupMenu popup) {
 		component.addMouseListener(new MouseAdapter() {
@@ -583,4 +760,5 @@ public class GUI extends JFrame {
 			}
 		});
 	}
+	
 }

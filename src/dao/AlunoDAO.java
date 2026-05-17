@@ -169,4 +169,56 @@ public class AlunoDAO {
 			ConnectionFactory.closeConnection(conn);
 		}
 	}
+	
+	public void salvarCursoDoAluno(String ra, int codCurso) {
+	    
+	    String sqlVerifica = "SELECT ra FROM tbaluno WHERE ra = ?";
+	    String sqlAtualiza = "UPDATE tbaluno SET codCurso = ? WHERE ra = ?";
+
+	    try (Connection conn = ConnectionFactory.getConnection()) {
+
+	        try (PreparedStatement stmtVerifica = conn.prepareStatement(sqlVerifica)) {
+	            stmtVerifica.setString(1, ra);
+	            ResultSet rs = stmtVerifica.executeQuery();
+	            if (!rs.next()) {
+	                throw new RuntimeException(
+	                    "Aluno com RA " + ra + " não encontrado.\n" +
+	                    "Salve os Dados Pessoais antes de vincular o curso.");
+	            }
+	        }
+
+	        try (PreparedStatement stmtAtualiza = conn.prepareStatement(sqlAtualiza)) {
+	            stmtAtualiza.setInt(1, codCurso);
+	            stmtAtualiza.setString(2, ra);
+	            stmtAtualiza.executeUpdate();
+	        }
+
+	    } catch (RuntimeException e) {
+	        throw e;
+	    } catch (Exception e) {
+	        throw new RuntimeException("Erro ao salvar curso do aluno: ", e);
+	    }
+	}
+	
+	// Atualiza o codCurso do aluno na tabela tbaluno
+	public void atualizarCursoAluno(String ra, int codCurso) {
+	    String sql = "UPDATE tbaluno SET codCurso = ? WHERE ra = ?";
+
+	    try (Connection conn = ConnectionFactory.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+	        stmt.setInt(1, codCurso);
+	        stmt.setString(2, ra);
+
+	        int linhasAfetadas = stmt.executeUpdate();
+
+	        if (linhasAfetadas == 0) {
+	            throw new RuntimeException("Nenhum aluno encontrado com o RA: " + ra);
+	        }
+
+	    } catch (Exception e) {
+	        throw new RuntimeException("Erro ao atualizar curso do aluno: ", e);
+	    }
+	}
+	
 }
