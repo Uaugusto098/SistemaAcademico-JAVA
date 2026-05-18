@@ -77,6 +77,8 @@ public class GUI extends JFrame {
 	private JRadioButton rdbtnNoturno;
 	private JComboBox cmbUF; 
 	private java.util.List<String> todosCampi;
+	private JFormattedTextField fldDataNasc;
+	private JFormattedTextField fldCpf;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	
 	// Componentes globais da aba Boletim
@@ -224,15 +226,15 @@ public class GUI extends JFrame {
 		panelDados.add(textField_7);
 		
 		try {
-			JFormattedTextField formattedTextField = new JFormattedTextField(new MaskFormatter("##/##/####"));
-			formattedTextField.setBounds(181, 112, 65, 20);
-			panelDados.add(formattedTextField);
-			
-			JFormattedTextField formattedTextField_1 = new JFormattedTextField(new MaskFormatter("###.###.###-##"));
-			formattedTextField_1.setBounds(410, 22, 109, 20);
-			panelDados.add(formattedTextField_1);
+		    fldDataNasc = new JFormattedTextField(new MaskFormatter("##/##/####"));
+		    fldDataNasc.setBounds(181, 112, 65, 20);
+		    panelDados.add(fldDataNasc);
+
+		    fldCpf = new JFormattedTextField(new MaskFormatter("###.###.###-##"));
+		    fldCpf.setBounds(410, 22, 109, 20);
+		    panelDados.add(fldCpf);
 		} catch (Exception e) {
-			System.err.println("Erro ao inicializar formatação de máscaras: " + e.getMessage());
+		    System.err.println("Erro ao inicializar máscaras: " + e.getMessage());
 		}
 		
 		JFormattedTextField formattedTextField = new JFormattedTextField(new MaskFormatter("##/##/####"));
@@ -295,36 +297,68 @@ public class GUI extends JFrame {
 		btnSalvarCursos.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		        try {
+<<<<<<< Updated upstream
 		            //Valida o RA
 		            String ra = txtRa.getText().trim();
 		            if (ra.isEmpty()) {
+=======
+		            // Coleta dados da aba Dados Pessoais
+		            String ra        = textField.getText().trim();
+		            String nome      = textField_1.getText().trim();
+		            String email     = textField_4.getText().trim();
+		            String endereco  = textField_3.getText().trim();
+		            String municipio = textField_6.getText().trim();
+		            String celular   = textField_7.getText().trim();
+		            String uf        = (cmbUF.getSelectedItem() != null) ? cmbUF.getSelectedItem().toString() : "";
+		            String cpf       = (fldCpf != null) ? fldCpf.getText().trim() : "";
+		            String dataNascStr = (fldDataNasc != null) ? fldDataNasc.getText().trim() : "";
+
+		            // Validações dos dados pessoais
+		            if (ra.isEmpty() || nome.isEmpty()) {
+>>>>>>> Stashed changes
 		                JOptionPane.showMessageDialog(null,
-		                    "Informe o RA do aluno na aba 'Dados Pessoais' antes de salvar o curso.");
+		                    "Preencha pelo menos o RA e o Nome na aba 'Dados Pessoais'.");
 		                return;
 		            }
 
-		            //Valida combos
+		            // Converte a data de nascimento de dd/MM/yyyy para java.sql.Date
+		            java.sql.Date dataNasc = null;
+		            if (!dataNascStr.replace("/", "").trim().isEmpty()) {
+		                try {
+		                    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+		                    sdf.setLenient(false);
+		                    java.util.Date dataUtil = sdf.parse(dataNascStr);
+		                    dataNasc = new java.sql.Date(dataUtil.getTime());
+		                } catch (Exception ex) {
+		                    JOptionPane.showMessageDialog(null,
+		                        "Data de Nascimento inválida. Use o formato dd/MM/aaaa.");
+		                    return;
+		                }
+		            } else {
+		                JOptionPane.showMessageDialog(null, "Informe a Data de Nascimento.");
+		                return;
+		            }
+
+		            // Coleta dados da aba Cursos
 		            if (cmbCursos.getSelectedItem() == null || cmbCampus.getSelectedItem() == null) {
-		                JOptionPane.showMessageDialog(null,
-		                    "Selecione um Curso e um Campus.");
+		                JOptionPane.showMessageDialog(null, "Selecione um Curso e um Campus.");
 		                return;
 		            }
 
 		            String cursoSelecionado  = cmbCursos.getSelectedItem().toString();
 		            String campusSelecionado = cmbCampus.getSelectedItem().toString();
 
-		            //Valida período
 		            String periodoSelecionado = "";
-		            if      (rdbtnMatutino.isSelected())  periodoSelecionado = "Matutino";
-		            else if (rdbtnVespertino.isSelected()) periodoSelecionado = "Vespertino";
-		            else if (rdbtnNoturno.isSelected())    periodoSelecionado = "Noturno";
+		            if      (rdbtnMatutino.isSelected())   periodoSelecionado = "Matutino";
+		            else if (rdbtnVespertino.isSelected())  periodoSelecionado = "Vespertino";
+		            else if (rdbtnNoturno.isSelected())     periodoSelecionado = "Noturno";
 
 		            if (periodoSelecionado.isEmpty()) {
 		                JOptionPane.showMessageDialog(null, "Selecione um Período.");
 		                return;
 		            }
 
-		            //Descobre o codCurso
+		            // Descobre o codCurso
 		            dao.CursoDAO cursoDAO = new dao.CursoDAO();
 		            int codCurso = cursoDAO.descobrirCodCurso(
 		                cursoSelecionado, campusSelecionado, periodoSelecionado);
@@ -335,21 +369,29 @@ public class GUI extends JFrame {
 		                return;
 		            }
 
-		            //Salva o vínculo
+		            // Monta o objeto Aluno completo
+		            model.Aluno aluno = new model.Aluno(
+		                nome, ra, cpf, dataNasc,
+		                email, municipio, uf,
+		                String.valueOf(codCurso),
+		                endereco, celular
+		            );
+
+		            // Insere no banco
 		            dao.AlunoDAO alunoDAO = new dao.AlunoDAO();
-		            alunoDAO.salvarCursoDoAluno(ra, codCurso);
+		            alunoDAO.salvar(aluno);
 
 		            JOptionPane.showMessageDialog(null,
-		                "Curso vinculado com sucesso!\n\n" +
-		                "RA: "      + ra              + "\n" +
+		                "Aluno cadastrado com sucesso!\n\n" +
+		                "RA: "      + ra               + "\n" +
+		                "Nome: "    + nome             + "\n" +
 		                "Curso: "   + cursoSelecionado  + "\n" +
-		                "Campus: "  + campusSelecionado  + "\n" +
-		                "Período: " + periodoSelecionado + "\n" +
-		                "ID do Curso: " + codCurso);
+		                "Campus: "  + campusSelecionado + "\n" +
+		                "Período: " + periodoSelecionado);
 
 		        } catch (Exception ex) {
 		            JOptionPane.showMessageDialog(null,
-		                "Erro ao salvar curso: " + ex.getMessage());
+		                "Erro ao cadastrar aluno: " + ex.getMessage());
 		        }
 		    }
 		});
@@ -362,15 +404,42 @@ public class GUI extends JFrame {
 		btnAlterarCursos.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		        try {
+<<<<<<< Updated upstream
 		            //Valida o RA (vem da aba Dados Pessoais)
 		            String ra = txtRa.getText().trim();
+=======
+		            // Coleta todos os dados para montar o Aluno atualizado
+		            String ra        = textField.getText().trim();
+		            String nome      = textField_1.getText().trim();
+		            String email     = textField_4.getText().trim();
+		            String endereco  = textField_3.getText().trim();
+		            String municipio = textField_6.getText().trim();
+		            String celular   = textField_7.getText().trim();
+		            String uf        = (cmbUF.getSelectedItem() != null) ? cmbUF.getSelectedItem().toString() : "";
+		            String cpf       = (fldCpf != null) ? fldCpf.getText().trim() : "";
+		            String dataNascStr = (fldDataNasc != null) ? fldDataNasc.getText().trim() : "";
+
+>>>>>>> Stashed changes
 		            if (ra.isEmpty()) {
 		                JOptionPane.showMessageDialog(null,
-		                    "Informe o RA do aluno na aba 'Dados Pessoais' antes de alterar o curso.");
+		                    "Informe o RA do aluno na aba 'Dados Pessoais'.");
 		                return;
 		            }
 
-		            //Valida as seleções do combo
+		            // Converte a data
+		            java.sql.Date dataNasc = null;
+		            if (!dataNascStr.replace("/", "").trim().isEmpty()) {
+		                try {
+		                    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+		                    sdf.setLenient(false);
+		                    dataNasc = new java.sql.Date(sdf.parse(dataNascStr).getTime());
+		                } catch (Exception ex) {
+		                    JOptionPane.showMessageDialog(null, "Data de Nascimento inválida.");
+		                    return;
+		                }
+		            }
+
+		            // Valida seleção de curso
 		            if (cmbCursos.getSelectedItem() == null || cmbCampus.getSelectedItem() == null) {
 		                JOptionPane.showMessageDialog(null, "Selecione um Curso e um Campus.");
 		                return;
@@ -379,7 +448,6 @@ public class GUI extends JFrame {
 		            String cursoSelecionado  = cmbCursos.getSelectedItem().toString();
 		            String campusSelecionado = cmbCampus.getSelectedItem().toString();
 
-		            //Valida o período
 		            String periodoSelecionado = "";
 		            if      (rdbtnMatutino.isSelected())   periodoSelecionado = "Matutino";
 		            else if (rdbtnVespertino.isSelected())  periodoSelecionado = "Vespertino";
@@ -390,37 +458,45 @@ public class GUI extends JFrame {
 		                return;
 		            }
 
-		            //Descobre o codCurso pela combinação escolhida
+		            // Descobre o codCurso
 		            dao.CursoDAO cursoDAO = new dao.CursoDAO();
 		            int codCurso = cursoDAO.descobrirCodCurso(
 		                cursoSelecionado, campusSelecionado, periodoSelecionado);
 
 		            if (codCurso == 0) {
 		                JOptionPane.showMessageDialog(null,
-		                    "Combinação de Curso, Campus e Período não encontrada no sistema.");
+		                    "Combinação de Curso, Campus e Período não encontrada.");
 		                return;
 		            }
 
-		            //Confirmação antes de gravar
+		            // Confirmação
 		            int confirmacao = JOptionPane.showConfirmDialog(null,
-		                "Confirma a alteração do curso do aluno RA " + ra + "?\n\n" +
+		                "Confirma a alteração do aluno RA " + ra + "?\n\n" +
 		                "Curso:   " + cursoSelecionado  + "\n" +
-		                "Campus:  " + campusSelecionado  + "\n" +
+		                "Campus:  " + campusSelecionado + "\n" +
 		                "Período: " + periodoSelecionado,
 		                "Confirmar Alteração",
 		                JOptionPane.YES_NO_OPTION);
 
 		            if (confirmacao != JOptionPane.YES_OPTION) return;
 
-		            //Executa o UPDATE
-		            dao.AlunoDAO alunoDAO = new dao.AlunoDAO();
-		            alunoDAO.atualizarCursoAluno(ra, codCurso);
+		            // Monta o Aluno com os dados atualizados
+		            model.Aluno aluno = new model.Aluno(
+		                nome, ra, cpf, dataNasc,
+		                email, municipio, uf,
+		                String.valueOf(codCurso),
+		                endereco, celular
+		            );
 
-		            JOptionPane.showMessageDialog(null, "Curso atualizado com sucesso!");
+		            // Executa o UPDATE completo
+		            dao.AlunoDAO alunoDAO = new dao.AlunoDAO();
+		            alunoDAO.atualizar(aluno);
+
+		            JOptionPane.showMessageDialog(null, "Aluno atualizado com sucesso!");
 
 		        } catch (Exception ex) {
 		            JOptionPane.showMessageDialog(null,
-		                "Erro ao atualizar curso: " + ex.getMessage());
+		                "Erro ao alterar aluno: " + ex.getMessage());
 		        }
 		    }
 		});
