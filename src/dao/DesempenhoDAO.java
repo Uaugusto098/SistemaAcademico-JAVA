@@ -139,4 +139,42 @@ public class DesempenhoDAO {
         }
         return null;
     }
+    
+    
+    // ── BUSCAR BOLETIM COMPLETO DO ALUNO ──────────────────────────
+    // Retorna a lista de todas as matérias cursadas pelo aluno com notas e faltas
+    public java.util.List<Desempenho> buscarBoletimCompleto(String ra) throws Exception {
+        String SQL = """
+            SELECT d.nota, d.faltas, disc.nomeDisciplina
+              FROM tbdesempenho d
+              JOIN tbdisciplinas disc ON disc.codDisciplina = d.codDisciplina
+             WHERE d.ra = ?
+            """;
+            
+        java.util.List<Desempenho> listaBoletim = new java.util.ArrayList<>();
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL)) {
+
+            ps.setString(1, ra);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Desempenho d = new Desempenho();
+                    d.setNota(rs.getDouble("nota"));
+                    d.setFaltas(rs.getInt("faltas"));
+                    
+                    // Como Desempenho herda de Aluno, usamos o setNome() herdado
+                    // para guardar temporariamente o nome da Disciplina que vai para a tabela
+                    d.setNome(rs.getString("nomeDisciplina")); 
+                    
+                    listaBoletim.add(d);
+                }
+            }
+        } catch (SQLException sqle) {
+            throw new Exception("Erro ao buscar lista do boletim: " + sqle);
+        }
+        return listaBoletim;
+    }
 }
+

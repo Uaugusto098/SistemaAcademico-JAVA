@@ -74,7 +74,9 @@ public class GUI extends JFrame {
     private JTextField txtNomeNotas;
     private JTextField txtCursoNotas;
     private JTextField txtFaltas;
-
+    private JTextField txtNota;               // ← ADICIONE
+    private JComboBox<Disciplina> cmbDisciplinas;  // ← ADICIONE
+    private JComboBox<String> cmbSemestre;
     // Aba Boletim
     private JLabel lblRgmBoletim;
     private JLabel lblNomeBoletim;
@@ -243,7 +245,7 @@ public class GUI extends JFrame {
         // Campos formatados globais (sem duplicata)
         try {
         	fldDataNasc = new JFormattedTextField(new MaskFormatter("##/##/####"));
-        	fldDataNasc.setBounds(181, 112, 65, 20);
+        	fldDataNasc.setBounds(181, 112, 84, 20);
         	fldDataNasc.setFocusLostBehavior(JFormattedTextField.PERSIST); 
         	panelDados.add(fldDataNasc);
         	
@@ -308,125 +310,7 @@ public class GUI extends JFrame {
         panelCurso.add(btnSalvarCursos);
         btnSalvarCursos.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	
-            	
-                try {
-                    // Coleta dados da aba Dados Pessoais
-                    String ra          = txtRa.getText().trim();
-                    String nome        = textField_1.getText().trim();
-                    String email       = textField_4.getText().trim();
-                    String endereco    = textField_3.getText().trim();
-                    String municipio   = textField_6.getText().trim();
-                    String celular     = textField_7.getText().trim();
-                    String uf          = (cmbUF.getSelectedItem() != null) ? cmbUF.getSelectedItem().toString() : "";
-                    String cpf         = (fldCpf != null) ? fldCpf.getText().trim() : "";
-                    String dataNascStr = (fldDataNasc != null) ? fldDataNasc.getText().trim() : "";
-
-                    // Validações básicas
-                    if (ra.isEmpty() || nome.isEmpty()) {
-                        JOptionPane.showMessageDialog(null,
-                            "Preencha pelo menos o RA e o Nome na aba 'Dados Pessoais'.");
-                        return;
-                    }
-
-                    // Validação de todos os campos obrigatórios
-                    if (email.isEmpty() || endereco.isEmpty() || municipio.isEmpty() ||
-                        celular.replaceAll("[^0-9]", "").isEmpty() ||
-                        cpf.replaceAll("[^0-9]", "").isEmpty() ||
-                        uf.isEmpty()) {
-                        JOptionPane.showMessageDialog(null,
-                            "Preencha todos os campos obrigatórios:\n\n" +
-                            (email.isEmpty()                              ? "- Email\n"     : "") +
-                            (endereco.isEmpty()                           ? "- Endereço\n"  : "") +
-                            (municipio.isEmpty()                          ? "- Município\n" : "") +
-                            (celular.replaceAll("[^0-9]", "").isEmpty()   ? "- Celular\n"   : "") +
-                            (cpf.replaceAll("[^0-9]", "").isEmpty()       ? "- CPF\n"       : "") +
-                            (uf.isEmpty()                                 ? "- UF\n"        : ""),
-                            "Campos obrigatórios",
-                            JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-
-                    // Verifica RA ou CPF duplicado
-                    dao.AlunoDAO alunoDAO = new dao.AlunoDAO();
-                    if (alunoDAO.existeRaOuCpf(ra, cpf)) {
-                        JOptionPane.showMessageDialog(null,
-                            "RA ou CPF já cadastrados.",
-                            "Duplicidade", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-
-                    // Converte data dd/MM/yyyy → java.sql.Date
-                    java.sql.Date dataNasc = null;
-                    if (!dataNascStr.replace("/", "").trim().isEmpty()) {
-                        try {
-                            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
-                            sdf.setLenient(false);
-                            dataNasc = new java.sql.Date(sdf.parse(dataNascStr).getTime());
-                        } catch (Exception ex) {
-                            JOptionPane.showMessageDialog(null,
-                                "Data de Nascimento inválida. Use o formato dd/MM/aaaa.");
-                            return;
-                        }
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Informe a Data de Nascimento.");
-                        return;
-                    }
-
-                    // Valida seleção de curso
-                    if (cmbCursos.getSelectedItem() == null || cmbCampus.getSelectedItem() == null) {
-                        JOptionPane.showMessageDialog(null, "Selecione um Curso e um Campus.");
-                        return;
-                    }
-
-                    String cursoSelecionado  = cmbCursos.getSelectedItem().toString();
-                    String campusSelecionado = cmbCampus.getSelectedItem().toString();
-
-                    String periodoSelecionado = "";
-                    if      (rdbtnMatutino.isSelected())  periodoSelecionado = "Matutino";
-                    else if (rdbtnVespertino.isSelected()) periodoSelecionado = "Vespertino";
-                    else if (rdbtnNoturno.isSelected())    periodoSelecionado = "Noturno";
-
-                    if (periodoSelecionado.isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "Selecione um Período.");
-                        return;
-                    }
-
-                    // Descobre o codCurso pela combinação
-                    dao.CursoDAO cursoDAO = new dao.CursoDAO();
-                    int codCurso = cursoDAO.descobrirCodCurso(
-                        cursoSelecionado, campusSelecionado, periodoSelecionado);
-
-                    if (codCurso == 0) {
-                        JOptionPane.showMessageDialog(null,
-                            "Combinação de Curso, Campus e Período não encontrada no sistema.");
-                        return;
-                    }
-
-                    // Monta e insere o Aluno
-                    model.Aluno aluno = new model.Aluno(
-                        nome, ra, cpf, dataNasc,
-                        email, municipio, uf,
-                        String.valueOf(codCurso),
-                        endereco, celular
-                    );
-
-                    alunoDAO.salvar(aluno);
-
-                    JOptionPane.showMessageDialog(null,
-                        "Aluno cadastrado com sucesso!\n\n" +
-                        "RA: "      + ra               + "\n" +
-                        "Nome: "    + nome             + "\n" +
-                        "Curso: "   + cursoSelecionado  + "\n" +
-                        "Campus: "  + campusSelecionado + "\n" +
-                        "Período: " + periodoSelecionado);
-
-                    limparCampos(); // Limpa os campos após salvar
-
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null,
-                        "Erro ao cadastrar aluno: " + ex.getMessage());
-                }
+            	salvarAluno();
             }
         });
 
@@ -438,81 +322,8 @@ public class GUI extends JFrame {
         panelCurso.add(btnAlterarCursos);
         btnAlterarCursos.addActionListener(new ActionListener() {  // <-- CORRETO
             public void actionPerformed(ActionEvent e) {
-                try {
-                    String ra          = txtRa.getText().trim();
-                    String nome        = textField_1.getText().trim();
-                    String email       = textField_4.getText().trim();
-                    String endereco    = textField_3.getText().trim();
-                    String municipio   = textField_6.getText().trim();
-                    String celular     = textField_7.getText().trim();
-                    String uf          = (cmbUF.getSelectedItem() != null) ? cmbUF.getSelectedItem().toString() : "";
-                    String cpf         = (fldCpf != null) ? fldCpf.getText().trim() : "";
-                    String dataNascStr = (fldDataNasc != null) ? fldDataNasc.getText().trim() : "";
-
-                    if (ra.isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "Informe o RA do aluno.");
-                        return;
-                    }
-
-                    java.sql.Date dataNasc = null;
-                    if (!dataNascStr.replace("/", "").trim().isEmpty()) {
-                        try {
-                            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
-                            sdf.setLenient(false);
-                            dataNasc = new java.sql.Date(sdf.parse(dataNascStr).getTime());
-                        } catch (Exception ex) {
-                            JOptionPane.showMessageDialog(null, "Data de Nascimento inválida.");
-                            return;
-                        }
-                    }
-
-                    if (cmbCursos.getSelectedItem() == null || cmbCampus.getSelectedItem() == null) {
-                        JOptionPane.showMessageDialog(null, "Selecione um Curso e um Campus.");
-                        return;
-                    }
-
-                    String cursoSelecionado  = cmbCursos.getSelectedItem().toString();
-                    String campusSelecionado = cmbCampus.getSelectedItem().toString();
-
-                    String periodoSelecionado = "";
-                    if      (rdbtnMatutino.isSelected())  periodoSelecionado = "Matutino";
-                    else if (rdbtnVespertino.isSelected()) periodoSelecionado = "Vespertino";
-                    else if (rdbtnNoturno.isSelected())    periodoSelecionado = "Noturno";
-
-                    if (periodoSelecionado.isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "Selecione um Período.");
-                        return;
-                    }
-
-                    dao.CursoDAO cursoDAO = new dao.CursoDAO();
-                    int codCurso = cursoDAO.descobrirCodCurso(cursoSelecionado, campusSelecionado, periodoSelecionado);
-
-                    if (codCurso == 0) {
-                        JOptionPane.showMessageDialog(null, "Combinação não encontrada.");
-                        return;
-                    }
-
-                    int confirmacao = JOptionPane.showConfirmDialog(null,
-                        "Confirma a alteração do aluno RA " + ra + "?",
-                        "Confirmar Alteração", JOptionPane.YES_NO_OPTION);
-                    if (confirmacao != JOptionPane.YES_OPTION) return;
-
-                    model.Aluno aluno = new model.Aluno(
-                        nome, ra, cpf, dataNasc,
-                        email, municipio, uf,
-                        String.valueOf(codCurso),
-                        endereco, celular
-                    );
-
-                    dao.AlunoDAO alunoDAO = new dao.AlunoDAO();
-                    alunoDAO.atualizar(aluno);  // <-- CORRETO, usa atualizar e não salvar
-
-                    JOptionPane.showMessageDialog(null, "Aluno atualizado com sucesso!");
-                    limparCampos();
-
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, "Erro ao alterar aluno: " + ex.getMessage());
-                }
+            	
+            	alterarAluno();
             }
         });
 
@@ -523,81 +334,10 @@ public class GUI extends JFrame {
         panelCurso.add(btnConsultarCursos);
         btnConsultarCursos.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String ra = txtRa.getText().trim();
-
-                if (ra.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Campo RA não pode estar vazio!");
-                    return;
-                }
-
-                try {
-                    AlunoDAO alunoDAO = new AlunoDAO();
-                    Aluno aluno = alunoDAO.procurarAluno(ra);
-
-                    if (aluno == null) {
-                        JOptionPane.showMessageDialog(null, "Aluno não encontrado.");
-                        return;
-                    }
-
-                    // Preenche campos da aba Dados Pessoais
-                    textField_1.setText(aluno.getNome());
-                    textField_4.setText(aluno.getEmail());
-                    textField_3.setText(aluno.getEndereco());
-                    textField_6.setText(aluno.getMunicipio());
-                    textField_7.setText(aluno.getCelular());
-
-                    if (fldCpf != null && aluno.getCpf() != null) {
-                        String cpfLimpo = aluno.getCpf().replaceAll("[^0-9]", "");
-                        if (cpfLimpo.length() == 11) {
-                            String cpfFormatado = cpfLimpo.replaceAll("(\\d{3})(\\d{3})(\\d{3})(\\d{2})", "$1.$2.$3-$4");
-                            fldCpf.setText(cpfFormatado);
-                        } else {
-                            fldCpf.setText(aluno.getCpf());
-                        }
-                    }
-
-                    if (aluno.getUf() != null) cmbUF.setSelectedItem(aluno.getUf());
-
-                    if (aluno.getDataNasc() != null) {
-                        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
-                        fldDataNasc.setText(sdf.format(aluno.getDataNasc()));
-                    }
-
-                    // Preenche campos da aba Cursos
-                    if (aluno.getCodCurso() != null && !aluno.getCodCurso().isEmpty()) {
-                        try {
-                            int codCurso = Integer.parseInt(aluno.getCodCurso());
-                            dao.CursoDAO cursoDAO = new dao.CursoDAO();
-                            model.Curso curso = cursoDAO.buscarPorCodigo(codCurso); // você precisa ter esse método
-
-                            if (curso != null) {
-                                // Seleciona o curso no combo
-                                cmbCursos.setSelectedItem(curso.getNomeCurso());
-
-                                // Seleciona a UF e filtra o campus
-                                if (aluno.getUf() != null) {
-                                    cmbUF.setSelectedItem(aluno.getUf());
-                                    filtrarCampiPorUF();
-                                }
-
-                                // Seleciona o campus
-                                cmbCampus.setSelectedItem(curso.getCampus());
-
-                                // Seleciona o período
-                                String periodo = curso.getPeriodo();
-                                if ("Matutino".equalsIgnoreCase(periodo))        rdbtnMatutino.setSelected(true);
-                                else if ("Vespertino".equalsIgnoreCase(periodo)) rdbtnVespertino.setSelected(true);
-                                else if ("Noturno".equalsIgnoreCase(periodo))    rdbtnNoturno.setSelected(true);
-                            }
-                        } catch (NumberFormatException ex) {
-                            JOptionPane.showMessageDialog(null, "Código de curso inválido.");
-                        }
-                    }
-
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, "Erro ao consultar aluno: " + ex.getMessage());
-                }
+            	
+            	consultarAluno();
             }
+            
         });
 
         // --- Botão EXCLUIR ---
@@ -607,32 +347,7 @@ public class GUI extends JFrame {
         panelCurso.add(btnExcluirCursos);
         btnExcluirCursos.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String ra = txtRa.getText().trim();
-
-                if (ra.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Campo RA não pode estar vazio!");
-                    return;
-                }
-
-                int confirmacao = JOptionPane.showConfirmDialog(null,
-                    "Confirma a exclusão do aluno RA " + ra + "?",
-                    "Confirmar Exclusão",
-                    JOptionPane.YES_NO_OPTION);
-
-                if (confirmacao != JOptionPane.YES_OPTION) return;
-
-                try {
-                    AlunoDAO alunoDAO = new AlunoDAO();
-                    Aluno aluno = new Aluno();
-                    aluno.setRa(ra);
-                    alunoDAO.excluir(aluno);
-                    JOptionPane.showMessageDialog(null, "Aluno excluído com sucesso!");
-                    
-                    limparCampos();
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null,
-                        "Erro ao excluir aluno: " + ex.getMessage());
-                }
+            	
             }
         });
 
@@ -679,7 +394,7 @@ public class GUI extends JFrame {
         lblDisciplina.setBounds(10, 118, 88, 24);
         panelNotasFaltas.add(lblDisciplina);
         
-        JComboBox<Disciplina> cmbDisciplinas = new JComboBox();
+        cmbDisciplinas = new JComboBox();
         cmbDisciplinas.setBounds(99, 122, 383, 22);
         try {
             DisciplinasDAO dao = new DisciplinasDAO();
@@ -697,7 +412,7 @@ public class GUI extends JFrame {
         lblSemestre.setBounds(10, 181, 81, 24);
         panelNotasFaltas.add(lblSemestre);
 
-        JComboBox<String> cmbSemestre = new JComboBox();
+         cmbSemestre = new JComboBox();
         cmbSemestre.setBounds(99, 185, 94, 22);
         cmbSemestre.addItem("2024-1");
         cmbSemestre.addItem("2024-2");
@@ -709,7 +424,7 @@ public class GUI extends JFrame {
         lblNota.setBounds(234, 181, 38, 24);
         panelNotasFaltas.add(lblNota);
         
-        JTextField txtNota = new JTextField();
+        txtNota = new JTextField();
         txtNota.setColumns(10);
         txtNota.setBounds(280, 186, 80, 20);
         panelNotasFaltas.add(txtNota);
@@ -760,30 +475,10 @@ public class GUI extends JFrame {
         panelNotasFaltas.add(btnSalvarNotas);
 
         JButton btnAlterarNotas = new JButton("");
-        btnAlterarNotas.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		 try {
-        			 	Disciplina disc = (Disciplina) cmbDisciplinas.getSelectedItem();
-        	            Desempenho d = new Desempenho();
-        	            d.setRa(txtRaNotas.getText());
-        	            d.setCodDisciplina(disc.getCodDisciplina());
-        	            d.setSemestre(cmbSemestre.getSelectedItem().toString());
-        	            d.setNota(Double.parseDouble(txtNota.getText())); // ✅ CORRIGIDO
-        	            d.setFaltas(Integer.parseInt(txtFaltas.getText()));
-
-        	            DesempenhoDAO dao = new DesempenhoDAO();
-        	            if (dao.alterar(d)) {
-        	                JOptionPane.showMessageDialog(null, "Nota alterada com sucesso!");
-        	                txtNota.setText("");
-                            txtFaltas.setText("");
-        	            } else {
-        	                JOptionPane.showMessageDialog(null, "Registro não encontrado.");
-        	            }
-        	        } catch (Exception ex) {
-        	            JOptionPane.showMessageDialog(null, "Erro ao alterar: " + ex.getMessage());
-        	        }
-        	}
-        });
+        
+        
+        btnAlterarNotas.addActionListener(e->alterarNotas()); 
+        	
         btnAlterarNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/update_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
         btnAlterarNotas.setBounds(152, 268, 89, 45);
         panelNotasFaltas.add(btnAlterarNotas);
@@ -838,36 +533,52 @@ public class GUI extends JFrame {
         JButton btnExcluirNotas = new JButton("");
         btnExcluirNotas.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		int confirm = JOptionPane.showConfirmDialog(null, "Deseja realmente excluir esta nota?", "Confirmação", JOptionPane.YES_NO_OPTION);
+        		  String ra = txtRaNotas.getText().trim(); // ← move para cá
 
-                if (confirm == JOptionPane.YES_OPTION) {
-                    try {
-                        String ra = txtRaNotas.getText();
+        	        if (ra.isEmpty()) {
+        	            JOptionPane.showMessageDialog(null, "Informe o RA do aluno antes de excluir!");
+        	            return;
+        	        }
 
-                        Disciplina disc = (Disciplina) cmbDisciplinas.getSelectedItem();
-                        int codDisciplina = disc.getCodDisciplina(); // ✅ CORRETO
+        	        int confirm = JOptionPane.showConfirmDialog(null, "Deseja realmente excluir esta nota?", "Confirmação", JOptionPane.YES_NO_OPTION);
 
-                        String sem = cmbSemestre.getSelectedItem().toString();
+        	        if (confirm == JOptionPane.YES_OPTION) {
+        	            try {
+        	                Disciplina disc = (Disciplina) cmbDisciplinas.getSelectedItem();
+        	                if (disc == null) {
+        	                    JOptionPane.showMessageDialog(null, "Selecione uma disciplina!");
+        	                    return;
+        	                }
 
-                        DesempenhoDAO dao = new DesempenhoDAO();
+        	                int codDisciplina = disc.getCodDisciplina();
+        	                String sem = cmbSemestre.getSelectedItem().toString();
 
-                        if (dao.excluir(ra, codDisciplina, sem)) { // ✅ CORRETO
-                            JOptionPane.showMessageDialog(null, "Nota excluída!");
-                            txtNota.setText("");
-                            txtFaltas.setText("");
-                        }
+        	                DesempenhoDAO dao = new DesempenhoDAO();
 
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(null, "Erro ao excluir: " + ex.getMessage());
-                    }
-                }
-        	}
+        	                if (dao.excluir(ra, codDisciplina, sem)) {
+        	                    JOptionPane.showMessageDialog(null, "Nota excluída!");
+        	                    txtNota.setText("");
+        	                    txtFaltas.setText("");
+        	                } else {
+        	                    JOptionPane.showMessageDialog(null, "Registro não encontrado.");
+        	                }
+
+        	            } catch (Exception ex) {
+        	                JOptionPane.showMessageDialog(null, "Erro ao excluir: " + ex.getMessage());
+        	            }
+        	        }
+        	    }
         });
         btnExcluirNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/delete_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
         btnExcluirNotas.setBounds(413, 268, 89, 45);
         panelNotasFaltas.add(btnExcluirNotas);
 
         JButton btnSairNotas = new JButton("");
+        btnSairNotas.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		System.exit(0);
+        	}
+        });
         btnSairNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/exit_to_app_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
         btnSairNotas.setBounds(543, 268, 89, 45);
         panelNotasFaltas.add(btnSairNotas);
@@ -900,6 +611,7 @@ public class GUI extends JFrame {
 
         String[] colunasBoletim = {"Disciplina / Matéria", "Nota Final", "Faltas Totais"};
         modeloTabelaBoletim = new DefaultTableModel(colunasBoletim, 0) {
+            private static final long serialVersionUID = 1L;
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -920,25 +632,58 @@ public class GUI extends JFrame {
         panelBoletim.add(scrollTabelaBoletim);
 
         tabbedPane.addChangeListener(e -> {
-            if (tabbedPane.getSelectedIndex() == 3) {
+            // 3 é o índice correspondente à 4ª aba (Boletim)
+            if (tabbedPane.getSelectedIndex() == 3) { 
                 String raDigitado = txtRaNotas.getText().trim();
+                
                 if (!raDigitado.isEmpty()) {
-                    // Descomente quando AlunoDAO.buscarBoletim() estiver implementado:
-                    /*
                     try {
-                        dao.AlunoDAO daoAluno = new dao.AlunoDAO();
-                        java.util.List<Desempenho> notas = daoAluno.buscarBoletim(raDigitado);
-                        atualizarInterfaceBoletim(notas);
+                        dao.DesempenhoDAO daoDesempenho = new dao.DesempenhoDAO();
+                        
+                        // 1. Busca os dados cadastrais (Nome e Curso) usando o método que já existe no seu DesempenhoDAO
+                        model.Aluno aluno = daoDesempenho.buscarAlunoPorRa(raDigitado);
+                        
+                        if (aluno != null) {
+                            lblRgmBoletim.setText("RA: " + aluno.getRa());
+                            lblNomeBoletim.setText("Nome: " + aluno.getNome());
+                            lblCursoBoletim.setText("Curso: " + aluno.getCodCurso());
+                        } else {
+                            lblRgmBoletim.setText("RA: ");
+                            lblNomeBoletim.setText("Nome: Aluno não encontrado");
+                            lblCursoBoletim.setText("Curso: ");
+                            modeloTabelaBoletim.setRowCount(0);
+                            return;
+                        }
+
+                        // 2. Busca e renderiza a lista de matérias com notas e faltas do banco de dados
+                        java.util.List<model.Desempenho> notas = daoDesempenho.buscarBoletimCompleto(raDigitado);
+                        
+                        modeloTabelaBoletim.setRowCount(0); // Reseta as linhas anteriores
+                        
+                        for (model.Desempenho d : notas) {
+                            Object[] linha = {
+                                d.getNome(),   // Atributo do modelo onde guardamos o nome vindo do JOIN
+                                d.getNota(),
+                                d.getFaltas()
+                            };
+                            modeloTabelaBoletim.addRow(linha);
+                        }
+                        
                     } catch (Exception ex) {
+                        javax.swing.JOptionPane.showMessageDialog(null, "Erro ao carregar o boletim: " + ex.getMessage());
                         ex.printStackTrace();
                     }
-                    */
+                } else {
+                    lblRgmBoletim.setText("RA: ");
+                    lblNomeBoletim.setText("Nome: ");
+                    lblCursoBoletim.setText("Curso: ");
+                    modeloTabelaBoletim.setRowCount(0);
+                    javax.swing.JOptionPane.showMessageDialog(null, "Por favor, digite o RA na aba anterior.");
                 }
             }
         });
 
         contentPane.add(tabbedPane);
-
         // =================================================
         // MENU BAR
         // =================================================
@@ -950,22 +695,53 @@ public class GUI extends JFrame {
         menuBar.add(mnAluno);
 
         JMenuItem mntmSalvar = new JMenuItem("Salvar");
-        mntmSalvar.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK));
+        mntmSalvar.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		
+        		salvarAluno();
+        	
+        	}
+        });
+        mntmSalvar.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
         mnAluno.add(mntmSalvar);
 
         JMenuItem mntmConsultar = new JMenuItem("Consultar");
+        mntmConsultar.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		
+        		consultarAluno();
+        		
+        	}
+        });
         mnAluno.add(mntmConsultar);
 
         JMenuItem mntmAlterar = new JMenuItem("Alterar");
+        mntmAlterar.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		
+        		
+        		alterarAluno();
+        		
+        		
+        	}
+        });
         mnAluno.add(mntmAlterar);
 
         JMenuItem mntmExcluir = new JMenuItem("Excluir");
+        mntmExcluir.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		
+        		excluirAluno();
+        		
+        		
+        	}
+        });
         mnAluno.add(mntmExcluir);
 
         mnAluno.add(new JSeparator());
 
         JMenuItem mntmSair = new JMenuItem("Sair");
-        mntmSair.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+        mntmSair.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.SHIFT_DOWN_MASK));
         mntmSair.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 System.exit(0);
@@ -975,10 +751,130 @@ public class GUI extends JFrame {
 
         JMenu mnNotasFaltas = new JMenu("Notas e faltas");
         menuBar.add(mnNotasFaltas);
-        mnNotasFaltas.add(new JMenuItem("Salvar"));
-        mnNotasFaltas.add(new JMenuItem("Alterar"));
-        mnNotasFaltas.add(new JMenuItem("Excluir"));
-        mnNotasFaltas.add(new JMenuItem("Consultar"));
+        JMenuItem menuItem = new JMenuItem("Salvar");
+        menuItem.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		
+        		 try {
+     	            if (txtNota.getText().isEmpty() || txtFaltas.getText().isEmpty()) {
+     	                JOptionPane.showMessageDialog(null, "Preencha nota e faltas!");
+     	                return;
+     	            }
+     	            
+     	            Disciplina disc = (Disciplina) cmbDisciplinas.getSelectedItem();
+     	            Desempenho d = new Desempenho();
+     	            d.setRa(txtRaNotas.getText());
+     	            d.setCodDisciplina(disc.getCodDisciplina());
+     	            d.setSemestre(cmbSemestre.getSelectedItem().toString());
+     	            d.setNota(Double.parseDouble(txtNota.getText())); 
+     	            d.setFaltas(Integer.parseInt(txtFaltas.getText()));
+
+     	            DesempenhoDAO dao = new DesempenhoDAO();
+     	            dao.inserir(d);
+
+     	            JOptionPane.showMessageDialog(null, "Nota salva com sucesso!");
+     	            txtNota.setText("");
+                     txtFaltas.setText("");
+     	        } catch (Exception ex) {
+     	            JOptionPane.showMessageDialog(null, "Erro ao salvar: " + ex.getMessage());
+     	        }
+        		
+        		
+        		
+        	}
+        });
+        mnNotasFaltas.add(menuItem);
+        JMenuItem menuItem_1 = new JMenuItem("Alterar");
+        menuItem_1.addActionListener(e->alterarNotas());
+        	
+        mnNotasFaltas.add(menuItem_1);
+        JMenuItem menuItem_3 = new JMenuItem("Excluir");
+        menuItem_3.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		  String ra = txtRaNotas.getText().trim(); // ← move para cá
+
+        	        if (ra.isEmpty()) {
+        	            JOptionPane.showMessageDialog(null, "Informe o RA do aluno antes de excluir!");
+        	            return;
+        	        }
+
+        	        int confirm = JOptionPane.showConfirmDialog(null, "Deseja realmente excluir esta nota?", "Confirmação", JOptionPane.YES_NO_OPTION);
+
+        	        if (confirm == JOptionPane.YES_OPTION) {
+        	            try {
+        	                Disciplina disc = (Disciplina) cmbDisciplinas.getSelectedItem();
+        	                if (disc == null) {
+        	                    JOptionPane.showMessageDialog(null, "Selecione uma disciplina!");
+        	                    return;
+        	                }
+
+        	                int codDisciplina = disc.getCodDisciplina();
+        	                String sem = cmbSemestre.getSelectedItem().toString();
+
+        	                DesempenhoDAO dao = new DesempenhoDAO();
+
+        	                if (dao.excluir(ra, codDisciplina, sem)) {
+        	                    JOptionPane.showMessageDialog(null, "Nota excluída!");
+        	                    txtNota.setText("");
+        	                    txtFaltas.setText("");
+        	                } else {
+        	                    JOptionPane.showMessageDialog(null, "Registro não encontrado.");
+        	                }
+
+        	            } catch (Exception ex) {
+        	                JOptionPane.showMessageDialog(null, "Erro ao excluir: " + ex.getMessage());
+        	            }
+        	        }
+        	    }
+        });
+        mnNotasFaltas.add(menuItem_3);
+        JMenuItem menuItem_2 = new JMenuItem("Consultar");
+        menuItem_2.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		
+        		try {
+                    String ra = txtRaNotas.getText().trim();
+
+                    if (cmbDisciplinas.getSelectedItem() == null || cmbSemestre.getSelectedItem() == null) {
+                        JOptionPane.showMessageDialog(null, "Selecione Disciplina e Semestre!");
+                        return;
+                    }
+
+                    Disciplina disc = (Disciplina) cmbDisciplinas.getSelectedItem();
+                    int codDisciplina = disc.getCodDisciplina(); // ✅ CORRETO
+
+                    String semestre = cmbSemestre.getSelectedItem().toString();
+
+                    DesempenhoDAO dao = new DesempenhoDAO();
+                    Desempenho d = dao.consultar(ra, codDisciplina, semestre); // ✅ CORRETO
+
+                    if (d != null) {
+                        txtNomeNotas.setText(d.getNome());
+                        txtCursoNotas.setText(d.getCodCurso());
+                        txtFaltas.setText(String.valueOf(d.getFaltas()));
+                        txtNota.setText(String.valueOf(d.getNota()));
+                    } else {
+                        model.Aluno a = dao.buscarAlunoPorRa(ra);
+                        if (a != null) {
+                            txtNomeNotas.setText(a.getNome());
+                            txtCursoNotas.setText(a.getCodCurso());
+                            JOptionPane.showMessageDialog(null, "Aluno encontrado, mas sem nota.");
+                            txtNota.setText("");
+                            txtFaltas.setText("");
+                            
+                        } else {
+                            JOptionPane.showMessageDialog(null, "RA não encontrado.");
+                        }
+                    }
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Erro ao consultar: " + ex.getMessage());
+                }
+        		
+        		
+        	}
+        });
+        mnNotasFaltas.add(menuItem_2);
 
         JMenu mnAjuda = new JMenu("Ajuda");
         menuBar.add(mnAjuda);
@@ -1051,6 +947,375 @@ public class GUI extends JFrame {
             cmbCampus.addItem("Nenhum campus disponível");
         }
     }
+    
+    public void salvarAluno() {
+    	
+    	 try {
+    	        String ra          = txtRa.getText().trim();
+    	        String nome        = textField_1.getText().trim();
+    	        String email       = textField_4.getText().trim();
+    	        String endereco    = textField_3.getText().trim();
+    	        String municipio   = textField_6.getText().trim();
+    	        String celular     = textField_7.getText().trim();
+    	        String uf          = (cmbUF.getSelectedItem() != null) ? cmbUF.getSelectedItem().toString() : "";
+    	        String cpf         = (fldCpf != null) ? fldCpf.getText().trim() : "";
+    	        String dataNascStr = (fldDataNasc != null) ? fldDataNasc.getText().trim() : "";
+
+    	        if (ra.isEmpty() || nome.isEmpty()) {
+    	            JOptionPane.showMessageDialog(null,
+    	                "Preencha pelo menos o RA e o Nome na aba 'Dados Pessoais'.");
+    	            return;
+    	        }
+
+    	        if (email.isEmpty() || endereco.isEmpty() || municipio.isEmpty() ||
+    	            celular.replaceAll("[^0-9]", "").isEmpty() ||
+    	            cpf.replaceAll("[^0-9]", "").isEmpty() ||
+    	            uf.isEmpty()) {
+    	            JOptionPane.showMessageDialog(null,
+    	                "Preencha todos os campos obrigatórios:\n\n" +
+    	                (email.isEmpty()                            ? "- Email\n"     : "") +
+    	                (endereco.isEmpty()                         ? "- Endereço\n"  : "") +
+    	                (municipio.isEmpty()                        ? "- Município\n" : "") +
+    	                (celular.replaceAll("[^0-9]", "").isEmpty() ? "- Celular\n"   : "") +
+    	                (cpf.replaceAll("[^0-9]", "").isEmpty()     ? "- CPF\n"       : "") +
+    	                (uf.isEmpty()                               ? "- UF\n"        : ""),
+    	                "Campos obrigatórios", JOptionPane.WARNING_MESSAGE);
+    	            return;
+    	        }
+
+    	        dao.AlunoDAO alunoDAO = new dao.AlunoDAO();
+    	        if (alunoDAO.existeRaOuCpf(ra, cpf)) {
+    	            JOptionPane.showMessageDialog(null,
+    	                "RA ou CPF já cadastrados.",
+    	                "Duplicidade", JOptionPane.WARNING_MESSAGE);
+    	            return;
+    	        }
+
+    	        java.sql.Date dataNasc = null;
+    	        if (!dataNascStr.replace("/", "").trim().isEmpty()) {
+    	            try {
+    	                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+    	                sdf.setLenient(false);
+    	                dataNasc = new java.sql.Date(sdf.parse(dataNascStr).getTime());
+    	            } catch (Exception ex) {
+    	                JOptionPane.showMessageDialog(null,
+    	                    "Data de Nascimento inválida. Use o formato dd/MM/aaaa.");
+    	                return;
+    	            }
+    	        } else {
+    	            JOptionPane.showMessageDialog(null, "Informe a Data de Nascimento.");
+    	            return;
+    	        }
+
+    	        if (cmbCursos.getSelectedItem() == null || cmbCampus.getSelectedItem() == null) {
+    	            JOptionPane.showMessageDialog(null, "Selecione um Curso e um Campus.");
+    	            return;
+    	        }
+
+    	        String cursoSelecionado  = cmbCursos.getSelectedItem().toString();
+    	        String campusSelecionado = cmbCampus.getSelectedItem().toString();
+
+    	        String periodoSelecionado = "";
+    	        if      (rdbtnMatutino.isSelected())   periodoSelecionado = "Matutino";
+    	        else if (rdbtnVespertino.isSelected())  periodoSelecionado = "Vespertino";
+    	        else if (rdbtnNoturno.isSelected())     periodoSelecionado = "Noturno";
+
+    	        if (periodoSelecionado.isEmpty()) {
+    	            JOptionPane.showMessageDialog(null, "Selecione um Período.");
+    	            return;
+    	        }
+
+    	        dao.CursoDAO cursoDAO = new dao.CursoDAO();
+    	        int codCurso = cursoDAO.descobrirCodCurso(
+    	            cursoSelecionado, campusSelecionado, periodoSelecionado);
+
+    	        if (codCurso == 0) {
+    	            JOptionPane.showMessageDialog(null,
+    	                "Combinação de Curso, Campus e Período não encontrada.");
+    	            return;
+    	        }
+
+    	        model.Aluno aluno = new model.Aluno(
+    	            nome, ra, cpf, dataNasc,
+    	            email, municipio, uf,
+    	            String.valueOf(codCurso),
+    	            endereco, celular
+    	        );
+
+    	        alunoDAO.salvar(aluno);
+
+    	        JOptionPane.showMessageDialog(null,
+    	            "Aluno cadastrado com sucesso!\n\n" +
+    	            "RA: "      + ra               + "\n" +
+    	            "Nome: "    + nome             + "\n" +
+    	            "Curso: "   + cursoSelecionado  + "\n" +
+    	            "Campus: "  + campusSelecionado + "\n" +
+    	            "Período: " + periodoSelecionado);
+
+    	        limparCampos();
+
+    	    } catch (Exception ex) {
+    	        JOptionPane.showMessageDialog(null,
+    	            "Erro ao cadastrar aluno: " + ex.getMessage());
+    	    }
+    	
+    	
+    	
+    }
+    
+    
+    
+    public void consultarAluno()
+    {
+    	
+    	String ra = txtRa.getText().trim();
+
+        if (ra.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Campo RA não pode estar vazio!");
+            return;
+        }
+
+        try {
+            AlunoDAO alunoDAO = new AlunoDAO();
+            Aluno aluno = alunoDAO.procurarAluno(ra);
+
+            if (aluno == null) {
+                JOptionPane.showMessageDialog(null, "Aluno não encontrado.");
+                return;
+            }
+
+            // Preenche campos da aba Dados Pessoais
+            textField_1.setText(aluno.getNome());
+            textField_4.setText(aluno.getEmail());
+            textField_3.setText(aluno.getEndereco());
+            textField_6.setText(aluno.getMunicipio());
+            textField_7.setText(aluno.getCelular());
+
+            if (fldCpf != null && aluno.getCpf() != null) {
+                String cpfLimpo = aluno.getCpf().replaceAll("[^0-9]", "");
+                if (cpfLimpo.length() == 11) {
+                    String cpfFormatado = cpfLimpo.replaceAll("(\\d{3})(\\d{3})(\\d{3})(\\d{2})", "$1.$2.$3-$4");
+                    fldCpf.setText(cpfFormatado);
+                } else {
+                    fldCpf.setText(aluno.getCpf());
+                }
+            }
+
+            if (aluno.getUf() != null) cmbUF.setSelectedItem(aluno.getUf());
+
+            if (aluno.getDataNasc() != null) {
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+                fldDataNasc.setText(sdf.format(aluno.getDataNasc()));
+            }
+
+            // Preenche campos da aba Cursos
+            if (aluno.getCodCurso() != null && !aluno.getCodCurso().isEmpty()) {
+                try {
+                    int codCurso = Integer.parseInt(aluno.getCodCurso());
+                    dao.CursoDAO cursoDAO = new dao.CursoDAO();
+                    model.Curso curso = cursoDAO.buscarPorCodigo(codCurso); // você precisa ter esse método
+
+                    if (curso != null) {
+                        // Seleciona o curso no combo
+                        cmbCursos.setSelectedItem(curso.getNomeCurso());
+
+                        // Seleciona a UF e filtra o campus
+                        if (aluno.getUf() != null) {
+                            cmbUF.setSelectedItem(aluno.getUf());
+                            filtrarCampiPorUF();
+                        }
+
+                        // Seleciona o campus
+                        cmbCampus.setSelectedItem(curso.getCampus());
+
+                        // Seleciona o período
+                        String periodo = curso.getPeriodo();
+                        if ("Matutino".equalsIgnoreCase(periodo))        rdbtnMatutino.setSelected(true);
+                        else if ("Vespertino".equalsIgnoreCase(periodo)) rdbtnVespertino.setSelected(true);
+                        else if ("Noturno".equalsIgnoreCase(periodo))    rdbtnNoturno.setSelected(true);
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Código de curso inválido.");
+                }
+            }
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Erro ao consultar aluno: " + ex.getMessage());
+        }
+    }
+    	
+    	
+    
+    
+   public void excluirAluno()
+   {
+	    String ra = txtRa.getText().trim();
+
+        if (ra.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Campo RA não pode estar vazio!");
+            return;
+        }
+
+        int confirmacao = JOptionPane.showConfirmDialog(null,
+            "Confirma a exclusão do aluno RA " + ra + "?",
+            "Confirmar Exclusão",
+            JOptionPane.YES_NO_OPTION);
+
+        if (confirmacao != JOptionPane.YES_OPTION) return;
+
+        try {
+            AlunoDAO alunoDAO = new AlunoDAO();
+            Aluno aluno = new Aluno();
+            aluno.setRa(ra);
+            alunoDAO.excluir(aluno);
+            JOptionPane.showMessageDialog(null, "Aluno excluído com sucesso!");
+            
+            limparCampos();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null,
+                "Erro ao excluir aluno: " + ex.getMessage());
+        }
+    }
+	   
+   
+    
+   private void alterarNotas() {
+	    try {
+	        String ra = txtRaNotas.getText().trim();
+	        if (ra.isEmpty()) {
+	            JOptionPane.showMessageDialog(null, "Informe o RA do aluno!");
+	            return;
+	        }
+	        if (txtNota.getText().isEmpty() || txtFaltas.getText().isEmpty()) {
+	            JOptionPane.showMessageDialog(null, "Preencha nota e faltas!");
+	            return;
+	        }
+
+	        Disciplina disc = (Disciplina) cmbDisciplinas.getSelectedItem();
+	        if (disc == null) {
+	            JOptionPane.showMessageDialog(null, "Selecione uma disciplina!");
+	            return;
+	        }
+
+	        Desempenho d = new Desempenho();
+	        d.setRa(ra);
+	        d.setCodDisciplina(disc.getCodDisciplina());
+	        d.setSemestre(cmbSemestre.getSelectedItem().toString());
+	        d.setNota(Double.parseDouble(txtNota.getText().replace(",", ".")));
+	        d.setFaltas(Integer.parseInt(txtFaltas.getText().trim())); // ← faltas aqui
+
+	        DesempenhoDAO dao = new DesempenhoDAO();
+	        if (dao.alterar(d)) {
+	            JOptionPane.showMessageDialog(null, "Nota e faltas alteradas com sucesso!");
+	            txtNota.setText("");
+	            txtFaltas.setText("");
+	        } else {
+	            JOptionPane.showMessageDialog(null, "Registro não encontrado. Consulte antes de alterar.");
+	        }
+
+	    } catch (NumberFormatException nfe) {
+	        JOptionPane.showMessageDialog(null, "Nota ou Faltas com valor inválido.");
+	    } catch (Exception ex) {
+	        JOptionPane.showMessageDialog(null, "Erro ao alterar: " + ex.getMessage());
+	    }
+	}
+    
+    
+    
+    public void alterarAluno() {
+    	
+    	  try {
+              String ra          = txtRa.getText().trim();
+              String nome        = textField_1.getText().trim();
+              String email       = textField_4.getText().trim();
+              String endereco    = textField_3.getText().trim();
+              String municipio   = textField_6.getText().trim();
+              String celular     = textField_7.getText().trim();
+              String uf          = (cmbUF.getSelectedItem() != null) ? cmbUF.getSelectedItem().toString() : "";
+              String cpf         = (fldCpf != null) ? fldCpf.getText().trim() : "";
+              String dataNascStr = (fldDataNasc != null) ? fldDataNasc.getText().trim() : "";
+
+              if (ra.isEmpty()) {
+                  JOptionPane.showMessageDialog(null, "Informe o RA do aluno.");
+                  return;
+              }
+
+              java.sql.Date dataNasc = null;
+              if (!dataNascStr.replace("/", "").trim().isEmpty()) {
+                  try {
+                      java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+                      sdf.setLenient(false);
+                      dataNasc = new java.sql.Date(sdf.parse(dataNascStr).getTime());
+                  } catch (Exception ex) {
+                      JOptionPane.showMessageDialog(null, "Data de Nascimento inválida.");
+                      return;
+                  }
+              }
+
+              if (cmbCursos.getSelectedItem() == null || cmbCampus.getSelectedItem() == null) {
+                  JOptionPane.showMessageDialog(null, "Selecione um Curso e um Campus.");
+                  return;
+              }
+
+              String cursoSelecionado  = cmbCursos.getSelectedItem().toString();
+              String campusSelecionado = cmbCampus.getSelectedItem().toString();
+
+              String periodoSelecionado = "";
+              if      (rdbtnMatutino.isSelected())  periodoSelecionado = "Matutino";
+              else if (rdbtnVespertino.isSelected()) periodoSelecionado = "Vespertino";
+              else if (rdbtnNoturno.isSelected())    periodoSelecionado = "Noturno";
+
+              if (periodoSelecionado.isEmpty()) {
+                  JOptionPane.showMessageDialog(null, "Selecione um Período.");
+                  return;
+              }
+
+              dao.CursoDAO cursoDAO = new dao.CursoDAO();
+              int codCurso = cursoDAO.descobrirCodCurso(cursoSelecionado, campusSelecionado, periodoSelecionado);
+
+              if (codCurso == 0) {
+                  JOptionPane.showMessageDialog(null, "Combinação não encontrada.");
+                  return;
+              }
+
+              int confirmacao = JOptionPane.showConfirmDialog(null,
+                  "Confirma a alteração do aluno RA " + ra + "?",
+                  "Confirmar Alteração", JOptionPane.YES_NO_OPTION);
+              if (confirmacao != JOptionPane.YES_OPTION) return;
+
+              model.Aluno aluno = new model.Aluno(
+                  nome, ra, cpf, dataNasc,
+                  email, municipio, uf,
+                  String.valueOf(codCurso),
+                  endereco, celular
+              );
+
+              dao.AlunoDAO alunoDAO = new dao.AlunoDAO();
+              alunoDAO.atualizar(aluno);  // <-- CORRETO, usa atualizar e não salvar
+
+              JOptionPane.showMessageDialog(null, "Aluno atualizado com sucesso!");
+              limparCampos();
+
+          } catch (Exception ex) {
+              JOptionPane.showMessageDialog(null, "Erro ao alterar aluno: " + ex.getMessage());
+          }
+    	
+    	
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     public void atualizarInterfaceBoletim(java.util.List<Desempenho> listaDesempenho) {
         if (listaDesempenho == null || listaDesempenho.isEmpty()) return;
