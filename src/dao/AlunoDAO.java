@@ -115,7 +115,22 @@ public class AlunoDAO {
 			ConnectionFactory.closeConnection(conn);
 		}
 	}
-	
+	public boolean existeRaOuCpf(String ra, String cpf) {
+	    String sql = "SELECT COUNT(*) FROM tbaluno WHERE ra = ? OR cpf = ?";
+	    try (Connection conn = ConnectionFactory.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+	        stmt.setString(1, ra);
+	        stmt.setString(2, cpf);
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getInt(1) > 0; // retorna true se encontrou pelo menos 1
+	            }
+	        }
+	    } catch (Exception e) {
+	        throw new RuntimeException("Erro ao verificar duplicidade: ", e);
+	    }
+	    return false;
+	}
 	// 4. Método Excluir 
 	public void excluir(Aluno aluno) throws Exception {
 		if (aluno == null) {
@@ -218,23 +233,6 @@ public class AlunoDAO {
 
 	    } catch (Exception e) {
 	        throw new RuntimeException("Erro ao atualizar curso do aluno: ", e);
-	    }
-	}
-	
-	// Verifica se já existe um aluno com o mesmo RA ou CPF
-	public boolean existeRaOuCpf(String ra, String cpf) throws Exception {
-	    String sql = "SELECT ra FROM tbaluno WHERE ra = ? OR cpf = ?";
-	    try (Connection conn = ConnectionFactory.getConnection();
-	         PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-	        stmt.setString(1, ra);
-	        stmt.setString(2, cpf);
-
-	        try (ResultSet rs = stmt.executeQuery()) {
-	            return rs.next(); // true = já existe
-	        }
-	    } catch (SQLException e) {
-	        throw new Exception("Erro ao verificar duplicidade: " + e.getMessage());
 	    }
 	}
 	

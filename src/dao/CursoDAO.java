@@ -48,7 +48,26 @@ public class CursoDAO {
         }
         return lista;
     }
-
+    public Curso buscarPorCodigo(int codCurso) {
+        String sql = "SELECT codCurso, nomeCurso, campus, periodo FROM tbcurso WHERE codCurso = ?";
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, codCurso);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Curso c = new Curso();
+                    c.setCodCurso(rs.getInt("codCurso"));
+                    c.setNomeCurso(rs.getString("nomeCurso"));
+                    c.setCampus(rs.getString("campus"));
+                    c.setPeriodo(rs.getString("periodo"));
+                    return c;
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao buscar curso por código: ", e);
+        }
+        return null;
+    }
     //O Detetive: Descobre o codCurso (1 a 45) baseado na combinacao da tela
     public int descobrirCodCurso(String nomeCurso, String campus, String periodo) {
         String sql = "SELECT codCurso FROM tbcurso WHERE nomeCurso = ? AND campus = ? AND periodo = ?";
