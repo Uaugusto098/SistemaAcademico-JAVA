@@ -516,6 +516,11 @@ public class GUI extends JFrame {
                     textField_7.setText(aluno.getCelular());
                     if (fldCpf != null) fldCpf.setText(aluno.getCpf());
                     if (aluno.getUf() != null) cmbUF.setSelectedItem(aluno.getUf());
+                    if (aluno.getDataNasc() != null) {
+                        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+                        fldDataNasc.setText(sdf.format(aluno.getDataNasc()));
+                    }
+                    
 
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null,
