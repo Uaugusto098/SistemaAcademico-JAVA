@@ -53,7 +53,7 @@ public class GUI extends JFrame {
     private JTextField textField_3;  // Endereço
     private JTextField textField_4;  // Email
     private JTextField textField_6;  // Município
-    private JTextField textField_7;  // Celular
+    private JFormattedTextField textField_7;
     private JFormattedTextField fldDataNasc;
     private JFormattedTextField fldCpf;
     private JComboBox cmbUF;
@@ -209,20 +209,34 @@ public class GUI extends JFrame {
         lblNewLabel_1_1_2_1.setBounds(370, 68, 57, 14);
         panelDados.add(lblNewLabel_1_1_2_1);
 
-        textField_7 = new JTextField();
+        try {
+            // Cria a máscara no formato padrão de celular do Brasil
+            javax.swing.text.MaskFormatter mascaraCelular = new javax.swing.text.MaskFormatter("(##) #####-####");
+            mascaraCelular.setPlaceholderCharacter('_'); // Mostra um sublinhado onde o usuário deve digitar
+            
+            // Troca o JTextField pelo JFormattedTextField
+            textField_7 = new javax.swing.JFormattedTextField(mascaraCelular);
+            textField_7.setFocusLostBehavior(JFormattedTextField.PERSIST); 
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+            textField_7 = new JFormattedTextField(); // fallback sem máscara
+        }
+
         textField_7.setColumns(10);
         textField_7.setBounds(437, 64, 158, 20);
         panelDados.add(textField_7);
 
         // Campos formatados globais (sem duplicata)
         try {
-            fldDataNasc = new JFormattedTextField(new MaskFormatter("##/##/####"));
-            fldDataNasc.setBounds(181, 112, 65, 20);
-            panelDados.add(fldDataNasc);
-
-            fldCpf = new JFormattedTextField(new MaskFormatter("###.###.###-##"));
-            fldCpf.setBounds(410, 22, 109, 20);
-            panelDados.add(fldCpf);
+        	fldDataNasc = new JFormattedTextField(new MaskFormatter("##/##/####"));
+        	fldDataNasc.setBounds(181, 112, 65, 20);
+        	fldDataNasc.setFocusLostBehavior(JFormattedTextField.PERSIST); 
+        	panelDados.add(fldDataNasc);
+        	
+        	fldCpf = new JFormattedTextField(new MaskFormatter("###.###.###-##"));
+        	fldCpf.setBounds(410, 22, 109, 20);
+        	fldCpf.setFocusLostBehavior(JFormattedTextField.PERSIST); // <-- adicione
+        	panelDados.add(fldCpf);
         } catch (Exception e) {
             System.err.println("Erro ao inicializar máscaras: " + e.getMessage());
         }
