@@ -39,8 +39,11 @@ import java.util.List;
 import model.Curso;
 import dao.AlunoDAO;
 import dao.CursoDAO;
+import dao.DesempenhoDAO;
+import dao.DisciplinasDAO;
 import model.Aluno;
 import model.Desempenho;
+import model.Disciplina;
 
 public class GUI extends JFrame {
 
@@ -96,6 +99,7 @@ public class GUI extends JFrame {
             }
         });
     }
+   
 
     // =========================================================
     public GUI() throws Exception {
@@ -674,28 +678,41 @@ public class GUI extends JFrame {
         lblDisciplina.setFont(new Font("Dialog", Font.PLAIN, 18));
         lblDisciplina.setBounds(10, 118, 88, 24);
         panelNotasFaltas.add(lblDisciplina);
+        
+        JComboBox<Disciplina> cmbDisciplinas = new JComboBox();
+        cmbDisciplinas.setBounds(99, 122, 383, 22);
+        try {
+            DisciplinasDAO dao = new DisciplinasDAO();
+            for (Disciplina d : dao.listarParaCombo()) {
+                cmbDisciplinas.addItem(d);
+            }
 
-        JComboBox cmbCursoNotas = new JComboBox();
-        cmbCursoNotas.setBounds(99, 122, 383, 22);
-        panelNotasFaltas.add(cmbCursoNotas);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Erro ao carregar disciplinas: " + e.getMessage());
+        }
+        panelNotasFaltas.add(cmbDisciplinas);
 
         JLabel lblSemestre = new JLabel("Semestre");
         lblSemestre.setFont(new Font("Dialog", Font.PLAIN, 18));
         lblSemestre.setBounds(10, 181, 81, 24);
         panelNotasFaltas.add(lblSemestre);
 
-        JComboBox cmbSemestre = new JComboBox();
+        JComboBox<String> cmbSemestre = new JComboBox();
         cmbSemestre.setBounds(99, 185, 94, 22);
+        cmbSemestre.addItem("2024-1");
+        cmbSemestre.addItem("2024-2");
+        cmbSemestre.addItem("2025-1");
         panelNotasFaltas.add(cmbSemestre);
 
         JLabel lblNota = new JLabel("Nota");
         lblNota.setFont(new Font("Dialog", Font.PLAIN, 18));
         lblNota.setBounds(234, 181, 38, 24);
         panelNotasFaltas.add(lblNota);
-
-        JComboBox cmbSemestre_1 = new JComboBox();
-        cmbSemestre_1.setBounds(282, 185, 53, 22);
-        panelNotasFaltas.add(cmbSemestre_1);
+        
+        JTextField txtNota = new JTextField();
+        txtNota.setColumns(10);
+        txtNota.setBounds(280, 186, 80, 20);
+        panelNotasFaltas.add(txtNota);
 
         JLabel lblFaltas = new JLabel("Faltas");
         lblFaltas.setFont(new Font("Dialog", Font.PLAIN, 18));
@@ -706,23 +723,146 @@ public class GUI extends JFrame {
         txtFaltas.setColumns(10);
         txtFaltas.setBounds(445, 186, 102, 20);
         panelNotasFaltas.add(txtFaltas);
+        
+        
 
         JButton btnSalvarNotas = new JButton("");
+        btnSalvarNotas.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		
+        		 try {
+        	            if (txtNota.getText().isEmpty() || txtFaltas.getText().isEmpty()) {
+        	                JOptionPane.showMessageDialog(null, "Preencha nota e faltas!");
+        	                return;
+        	            }
+        	            
+        	            Disciplina disc = (Disciplina) cmbDisciplinas.getSelectedItem();
+        	            Desempenho d = new Desempenho();
+        	            d.setRa(txtRaNotas.getText());
+        	            d.setCodDisciplina(disc.getCodDisciplina());
+        	            d.setSemestre(cmbSemestre.getSelectedItem().toString());
+        	            d.setNota(Double.parseDouble(txtNota.getText())); 
+        	            d.setFaltas(Integer.parseInt(txtFaltas.getText()));
+
+        	            DesempenhoDAO dao = new DesempenhoDAO();
+        	            dao.inserir(d);
+
+        	            JOptionPane.showMessageDialog(null, "Nota salva com sucesso!");
+        	            txtNota.setText("");
+                        txtFaltas.setText("");
+        	        } catch (Exception ex) {
+        	            JOptionPane.showMessageDialog(null, "Erro ao salvar: " + ex.getMessage());
+        	        }
+            }
+        });
         btnSalvarNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/save_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
         btnSalvarNotas.setBounds(26, 268, 89, 45);
         panelNotasFaltas.add(btnSalvarNotas);
 
         JButton btnAlterarNotas = new JButton("");
+        btnAlterarNotas.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		 try {
+        			 	Disciplina disc = (Disciplina) cmbDisciplinas.getSelectedItem();
+        	            Desempenho d = new Desempenho();
+        	            d.setRa(txtRaNotas.getText());
+        	            d.setCodDisciplina(disc.getCodDisciplina());
+        	            d.setSemestre(cmbSemestre.getSelectedItem().toString());
+        	            d.setNota(Double.parseDouble(txtNota.getText())); // ✅ CORRIGIDO
+        	            d.setFaltas(Integer.parseInt(txtFaltas.getText()));
+
+        	            DesempenhoDAO dao = new DesempenhoDAO();
+        	            if (dao.alterar(d)) {
+        	                JOptionPane.showMessageDialog(null, "Nota alterada com sucesso!");
+        	                txtNota.setText("");
+                            txtFaltas.setText("");
+        	            } else {
+        	                JOptionPane.showMessageDialog(null, "Registro não encontrado.");
+        	            }
+        	        } catch (Exception ex) {
+        	            JOptionPane.showMessageDialog(null, "Erro ao alterar: " + ex.getMessage());
+        	        }
+        	}
+        });
         btnAlterarNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/update_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
         btnAlterarNotas.setBounds(152, 268, 89, 45);
         panelNotasFaltas.add(btnAlterarNotas);
 
         JButton btnConsultarNotas = new JButton("");
+        btnConsultarNotas.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		try {
+                    String ra = txtRaNotas.getText().trim();
+
+                    if (cmbDisciplinas.getSelectedItem() == null || cmbSemestre.getSelectedItem() == null) {
+                        JOptionPane.showMessageDialog(null, "Selecione Disciplina e Semestre!");
+                        return;
+                    }
+
+                    Disciplina disc = (Disciplina) cmbDisciplinas.getSelectedItem();
+                    int codDisciplina = disc.getCodDisciplina(); // ✅ CORRETO
+
+                    String semestre = cmbSemestre.getSelectedItem().toString();
+
+                    DesempenhoDAO dao = new DesempenhoDAO();
+                    Desempenho d = dao.consultar(ra, codDisciplina, semestre); // ✅ CORRETO
+
+                    if (d != null) {
+                        txtNomeNotas.setText(d.getNome());
+                        txtCursoNotas.setText(d.getCodCurso());
+                        txtFaltas.setText(String.valueOf(d.getFaltas()));
+                        txtNota.setText(String.valueOf(d.getNota()));
+                    } else {
+                        model.Aluno a = dao.buscarAlunoPorRa(ra);
+                        if (a != null) {
+                            txtNomeNotas.setText(a.getNome());
+                            txtCursoNotas.setText(a.getCodCurso());
+                            JOptionPane.showMessageDialog(null, "Aluno encontrado, mas sem nota.");
+                            txtNota.setText("");
+                            txtFaltas.setText("");
+                            
+                        } else {
+                            JOptionPane.showMessageDialog(null, "RA não encontrado.");
+                        }
+                    }
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Erro ao consultar: " + ex.getMessage());
+                }
+        	}
+        });
         btnConsultarNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/search_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
         btnConsultarNotas.setBounds(283, 268, 89, 45);
         panelNotasFaltas.add(btnConsultarNotas);
 
         JButton btnExcluirNotas = new JButton("");
+        btnExcluirNotas.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		int confirm = JOptionPane.showConfirmDialog(null, "Deseja realmente excluir esta nota?", "Confirmação", JOptionPane.YES_NO_OPTION);
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    try {
+                        String ra = txtRaNotas.getText();
+
+                        Disciplina disc = (Disciplina) cmbDisciplinas.getSelectedItem();
+                        int codDisciplina = disc.getCodDisciplina(); // ✅ CORRETO
+
+                        String sem = cmbSemestre.getSelectedItem().toString();
+
+                        DesempenhoDAO dao = new DesempenhoDAO();
+
+                        if (dao.excluir(ra, codDisciplina, sem)) { // ✅ CORRETO
+                            JOptionPane.showMessageDialog(null, "Nota excluída!");
+                            txtNota.setText("");
+                            txtFaltas.setText("");
+                        }
+
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, "Erro ao excluir: " + ex.getMessage());
+                    }
+                }
+        	}
+        });
         btnExcluirNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/delete_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
         btnExcluirNotas.setBounds(413, 268, 89, 45);
         panelNotasFaltas.add(btnExcluirNotas);
@@ -958,4 +1098,5 @@ public class GUI extends JFrame {
         cmbUF.setSelectedIndex(0);
         buttonGroup.clearSelection();
     }
+    
 }

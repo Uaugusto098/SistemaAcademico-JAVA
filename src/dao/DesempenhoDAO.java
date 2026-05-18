@@ -4,172 +4,139 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 import util.ConnectionFactory;
 import model.Aluno;
+import model.Desempenho;
 
 public class DesempenhoDAO {
-	
-		
-		private Connection conn;
-		private PreparedStatement ps;
-		private ResultSet rs;
-		private Aluno aluno; 
-		
-		public DesempenhoDAO() {
-			
-		}
 
-		// 1. Método Salvar 
-		public void salvar(Aluno aluno) throws Exception {	
-			if(aluno == null) {
-				throw new Exception ("O Aluno nao pode ser nulo");
-			}
-				
-	        try {
-	            this.conn = ConnectionFactory.getConnection();
-	            
-	           
-	            String SQL = "INSERT INTO tbaluno (ra, nome, cpf, dataNasc, email, municipio, uf, codCurso, endereco, celular) "
-	                       + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	            
-	            ps = conn.prepareStatement(SQL);
-	            ps.setString(1, aluno.getRa());
-	            ps.setString(2, aluno.getNome());
-	            ps.setString(3, aluno.getCpf());
-	            ps.setDate(4, aluno.getDataNasc()); 
-	            ps.setString(5, aluno.getEmail());
-	            ps.setString(6, aluno.getMunicipio());
-	            ps.setString(7, aluno.getUf());
-	            ps.setString(8, aluno.getCodCurso());
-	            ps.setString(9, aluno.getEndereco());
-	            ps.setString(10, aluno.getCelular());
-	            ps.executeUpdate(); 
-	            
-	        } catch(SQLException sql) {
-	            throw new Exception("Erro ao inserir dados: " + sql);
-	        } finally {
-	            ConnectionFactory.closeConnection(conn);
-	        }
-		}
-		
-		// 2. Método Listar 
-		public List<Aluno> todosAlunos() throws Exception {
-			try {
-				this.conn = ConnectionFactory.getConnection();
-				ps = conn.prepareStatement("SELECT * FROM tbaluno");
-				rs = ps.executeQuery();
-				List<Aluno> list = new ArrayList<Aluno>();
-				
-				while (rs.next()) {
-	               
-					String ra = rs.getString("ra");
-					String nome = rs.getString("nome");
-					String cpf = rs.getString("cpf");
-					Date dataNasc = rs.getDate("dataNasc");
-					String email = rs.getString("email");
-					String municipio = rs.getString("municipio");
-					String uf = rs.getString("uf");
-					String codCurso = rs.getString("codCurso");
-					String endereco = rs.getString("endereco");
-					String celular = rs.getString("celular");
-					
-					list.add(new Aluno(nome, ra, cpf, dataNasc, email, municipio, uf, codCurso, endereco, celular));
-				}
-				
-				return list;
-			} catch (SQLException sqle) {
-				throw new Exception(sqle);
-			} finally {
-				ConnectionFactory.closeConnection(conn);
-			}
-		}
-		
-		// 3. Método Atualizar 
-		public void atualizar(Aluno aluno) throws Exception {
-			if (aluno == null) {
-				throw new Exception("O valor passado nao pode ser nulo");
-	        }
-			
-			try {
-	            this.conn = ConnectionFactory.getConnection();
-			    String SQL = "UPDATE tbaluno SET nome=?, cpf=?, celular=?, dataNasc=?, email=?, endereco=?, municipio=?, uf=?, codCurso=? WHERE ra = ?";
-				
-				ps = conn.prepareStatement(SQL);
-				ps.setString(1, aluno.getNome());
-				ps.setString(2, aluno.getCpf());
-				ps.setString(3, aluno.getCelular());
-				ps.setDate(4, aluno.getDataNasc());
-				ps.setString(5, aluno.getEmail());
-				ps.setString(6, aluno.getEndereco());
-				ps.setString(7, aluno.getMunicipio());
-				ps.setString(8, aluno.getUf());
-				ps.setString(9, aluno.getCodCurso());
-	            ps.setString(10, aluno.getRa()); 
-				ps.executeUpdate();
-				
-			} catch (SQLException sqle) {
-				throw new Exception("Erro ao alterar dados " + sqle);
-			} finally {
-				ConnectionFactory.closeConnection(conn);
-			}
-		}
-		
-		// 4. Método Excluir 
-		public void excluir(Aluno aluno) throws Exception {
-			if (aluno == null) {
-				throw new Exception("O valor passado nao pode ser nulo");
-	        }
-			
-			try {
-	            this.conn = ConnectionFactory.getConnection();
-				String SQL = "DELETE FROM tbaluno WHERE ra = ?"; 
-				ps = conn.prepareStatement(SQL);
-				ps.setString(1, aluno.getRa());
-				ps.executeUpdate();
-	            
-			} catch (SQLException sqle) {
-				throw new Exception("Erro ao excluir dados " + sqle);
-			} finally {
-				ConnectionFactory.closeConnection(conn);
-			}
-		}
+    // ── CONSULTAR ────────────────────────────────────────────────
+    // Botão 🔍 — busca nota e faltas pelo trio (RA, disciplina, semestre)
+	public Desempenho consultar(String ra, int codDisciplina, String semestre) throws Exception {
+	    String SQL = """
+	        SELECT d.ra, d.codDisciplina, d.semestre, d.nota, d.faltas,
+	               a.nome, c.nomeCurso
+	          FROM tbdesempenho d
+	          JOIN tbaluno a ON a.ra = d.ra
+	          JOIN tbcurso c ON c.codCurso = a.codCurso
+	         WHERE d.ra = ? AND d.codDisciplina = ? AND d.semestre = ?
+	        """;
 
-		// 5. Método Procurar Aluno Específico
-		public Aluno procurarAluno(String caAluno) throws Exception {
-			try {
-	            this.conn = ConnectionFactory.getConnection();
-				String SQL = "SELECT * FROM tbaluno WHERE ra=?"; 
-				ps = conn.prepareStatement(SQL);
-				ps.setString(1, caAluno);			
-				rs = ps.executeQuery();
-				
-				if (rs.next()) {
-	               
-					String ra = rs.getString("ra");
-					String nome = rs.getString("nome");
-					String cpf = rs.getString("cpf");
-					Date dataNasc = rs.getDate("dataNasc");
-					String email = rs.getString("email");
-					String municipio = rs.getString("municipio");
-					String uf = rs.getString("uf");
-					String codCurso = rs.getString("codCurso");
-					String endereco = rs.getString("endereco");
-					String celular = rs.getString("celular");
-	                
-					aluno = new Aluno(nome, ra, cpf, dataNasc, email, municipio, uf, codCurso, endereco, celular);
-				}
-				
-				return aluno;
-				
-			} catch (SQLException sqle) {
-				throw new Exception(sqle);
-			} finally {
-				ConnectionFactory.closeConnection(conn);
-			}
-		}
+	    try (Connection conn = ConnectionFactory.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(SQL)) {
+
+	        ps.setString(1, ra);
+	        ps.setInt(2, codDisciplina); // ✅ CORRETO
+	        ps.setString(3, semestre);
+
+	        try (ResultSet rs = ps.executeQuery()) {
+	            if (rs.next()) {
+	                Desempenho d = new Desempenho();
+	                d.setRa(rs.getString("ra"));
+	                d.setNome(rs.getString("nome"));
+	                d.setCodCurso(rs.getString("nomeCurso"));
+	                d.setCodDisciplina(rs.getInt("codDisciplina")); // ✅ CORRETO
+	                d.setSemestre(rs.getString("semestre"));
+	                d.setNota(rs.getDouble("nota"));
+	                d.setFaltas(rs.getInt("faltas"));
+	                return d;
+	            }
+	        }
+	    } catch (SQLException sqle) {
+	        throw new Exception("Erro ao consultar desempenho: " + sqle);
+	    }
+	    return null;
 	}
 
+    // ── INSERIR ──────────────────────────────────────────────────
+    // Botão 💾 — grava novo registro
+	public void inserir(Desempenho d) throws Exception {
+	    String SQL = "INSERT INTO tbdesempenho (ra, codDisciplina, semestre, nota, faltas) VALUES (?, ?, ?, ?, ?)";
 
+	    try (Connection conn = ConnectionFactory.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(SQL)) {
+
+	        ps.setString(1, d.getRa());
+	        ps.setInt(2, d.getCodDisciplina()); // ✅ CORRETO
+	        ps.setString(3, d.getSemestre());
+	        ps.setDouble(4, d.getNota());
+	        ps.setInt(5, d.getFaltas());
+
+	        ps.executeUpdate();
+
+	    } catch (SQLException sqle) {
+	        throw new Exception("Erro ao inserir desempenho: " + sqle);
+	    }
+	}
+
+    // ── ALTERAR ──────────────────────────────────────────────────
+    // Botão 🔄 — atualiza nota e faltas de registro existente
+	public boolean alterar(Desempenho d) throws Exception {
+	    String SQL = """
+	        UPDATE tbdesempenho
+	           SET nota = ?, faltas = ?
+	         WHERE ra = ? AND codDisciplina = ? AND semestre = ?
+	        """;
+
+	    try (Connection conn = ConnectionFactory.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(SQL)) {
+
+	        ps.setDouble(1, d.getNota());
+	        ps.setInt(2, d.getFaltas());
+	        ps.setString(3, d.getRa());
+	        ps.setInt(4, d.getCodDisciplina()); // ✅ CORRETO
+	        ps.setString(5, d.getSemestre());
+
+	        return ps.executeUpdate() > 0;
+
+	    } catch (SQLException sqle) {
+	        throw new Exception("Erro ao alterar desempenho: " + sqle);
+	    }
+	}
+    // ── EXCLUIR ──────────────────────────────────────────────────
+    // Botão 🗑️ — remove o registro
+	public boolean excluir(String ra, int codDisciplina, String semestre) throws Exception {
+	    String SQL = "DELETE FROM tbdesempenho WHERE ra = ? AND codDisciplina = ? AND semestre = ?";
+
+	    try (Connection conn = ConnectionFactory.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(SQL)) {
+
+	        ps.setString(1, ra);
+	        ps.setInt(2, codDisciplina); // ✅ CORRETO
+	        ps.setString(3, semestre);
+
+	        return ps.executeUpdate() > 0;
+
+	    } catch (SQLException sqle) {
+	        throw new Exception("Erro ao excluir desempenho: " + sqle);
+	    }
+	}
+
+    // ── BUSCAR ALUNO POR RA ──────────────────────────────────────
+    // Usado no focusLost do txtRaNotas para preencher nome e curso
+    public Aluno buscarAlunoPorRa(String ra) throws Exception {
+        String SQL = """
+            SELECT a.nome, c.nomeCurso
+              FROM tbaluno a
+              JOIN tbcurso c ON c.codCurso = a.codCurso
+             WHERE a.ra = ?
+            """;
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL)) {
+
+            ps.setString(1, ra);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Aluno a = new Aluno();
+                    a.setRa(ra);
+                    a.setNome(rs.getString("nome"));
+                    a.setCodCurso(rs.getString("nomeCurso"));
+                    return a;
+                }
+            }
+        } catch (SQLException sqle) {
+            throw new Exception("Erro ao buscar aluno: " + sqle);
+        }
+        return null;
+    }
+}
