@@ -74,6 +74,8 @@ public class GUI extends JFrame {
 	private JRadioButton rdbtnMatutino;
 	private JRadioButton rdbtnVespertino;
 	private JRadioButton rdbtnNoturno;
+	private JComboBox cmbUF; 
+	private java.util.List<String> todosCampi;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	
 	// Componentes globais da aba Boletim
@@ -186,7 +188,7 @@ public class GUI extends JFrame {
 		
 		JLabel lblNewLabel_1_1_1_1 = new JLabel("Município");
 		lblNewLabel_1_1_1_1.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblNewLabel_1_1_1_1.setBounds(366, 176, 83, 14);
+		lblNewLabel_1_1_1_1.setBounds(359, 168, 83, 26);
 		panelDados.add(lblNewLabel_1_1_1_1);
 		
 		textField_6 = new JTextField();
@@ -196,12 +198,19 @@ public class GUI extends JFrame {
 		
 		JLabel lblNewLabel_1_2_1 = new JLabel("UF");
 		lblNewLabel_1_2_1.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblNewLabel_1_2_1.setBounds(366, 215, 76, 14);
+		lblNewLabel_1_2_1.setBounds(359, 209, 40, 26);
 		panelDados.add(lblNewLabel_1_2_1);
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(410, 210, 30, 22);
-		panelDados.add(comboBox);
+		cmbUF = new JComboBox(new String[]{"SP", "RJ", "MG", "ES", "RS"});
+		cmbUF.setBounds(408, 206, 65, 31);
+		panelDados.add(cmbUF);
+
+		// Filtro: ao trocar a UF, recarrega o cmbCampus com apenas os campi daquele estado
+		cmbUF.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        filtrarCampiPorUF();
+		    }
+		});
 		
 		JLabel lblNewLabel_1_1_2_1 = new JLabel("Celular");
 		lblNewLabel_1_1_2_1.setFont(new Font("Dubai", Font.PLAIN, 18));
@@ -657,28 +666,29 @@ public class GUI extends JFrame {
 	}
 	
 	private void carregarSeletoresCurso() {
-		try {
-			dao.CursoDAO cursoDAO = new dao.CursoDAO();
-			
-			if (cmbCursos != null) cmbCursos.removeAllItems();
-			if (cmbCampus != null) cmbCampus.removeAllItems();
-			
-			java.util.List<model.Curso> listaCursos = cursoDAO.listarCursosParaCombo();
-			if (listaCursos != null) {
-				for (model.Curso c : listaCursos) {
-					cmbCursos.addItem(c.getNomeCurso()); 
-				}
-			}
-			
-			java.util.List<String> listaCampi = cursoDAO.listarCampiParaCombo();
-			if (listaCampi != null) {
-				for (String campus : listaCampi) {
-					cmbCampus.addItem(campus);
-				}
-			}
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "Erro ao popular seletores: " + e.getMessage());
-		}
+	    try {
+	        dao.CursoDAO cursoDAO = new dao.CursoDAO();
+
+	        if (cmbCursos != null) cmbCursos.removeAllItems();
+	        if (cmbCampus != null) cmbCampus.removeAllItems();
+
+	        java.util.List<model.Curso> listaCursos = cursoDAO.listarCursosParaCombo();
+	        if (listaCursos != null) {
+	            for (model.Curso c : listaCursos) {
+	                cmbCursos.addItem(c.getNomeCurso());
+	            }
+	        }
+
+	        // Salva lista completa antes de filtrar
+	        todosCampi = cursoDAO.listarCampiParaCombo();
+
+	        // Inicializa o mapa e já aplica o filtro da UF padrão (SP)
+	        inicializarMapaUFCampi();
+	        filtrarCampiPorUF();
+
+	    } catch (Exception e) {
+	        JOptionPane.showMessageDialog(null, "Erro ao popular seletores: " + e.getMessage());
+	    }
 	}
 	
 	/**
@@ -730,5 +740,40 @@ public class GUI extends JFrame {
 				popup.show(e.getComponent(), e.getX(), e.getY());
 			}
 		});
+	}
+	// Mapa que relaciona cada UF aos seus campi cadastrados no banco
+	private java.util.Map<String, java.util.List<String>> mapaUFCampi;
+
+	private void inicializarMapaUFCampi() {
+	    mapaUFCampi = new java.util.HashMap<>();
+
+	    // Ajuste os nomes exatamente como estão gravados na coluna "campus" do banco
+	    mapaUFCampi.put("SP", java.util.Arrays.asList("Itaquera", "Guarulhos", "Ferraz de Vasconcelos"));
+	    mapaUFCampi.put("RJ", java.util.Arrays.asList("Rio de Janeiro", "Niteroi", "Campo Grande"));
+	    mapaUFCampi.put("MG", java.util.Arrays.asList("Belo Horizonte", "Uberlandia"));
+	    mapaUFCampi.put("ES", java.util.Arrays.asList("Vitoria"));
+	    mapaUFCampi.put("RS", java.util.Arrays.asList("Porto Alegre"));
+	}
+
+	private void filtrarCampiPorUF() {
+	    if (cmbUF == null || cmbCampus == null || mapaUFCampi == null) return;
+
+	    String ufSelecionada = (String) cmbUF.getSelectedItem();
+	    cmbCampus.removeAllItems();
+
+	    java.util.List<String> campiDaUF = mapaUFCampi.get(ufSelecionada);
+
+	    if (campiDaUF != null) {
+	        for (String campus : campiDaUF) {
+	            // Só adiciona se o campus existe no banco (segurança extra)
+	            if (todosCampi != null && todosCampi.contains(campus)) {
+	                cmbCampus.addItem(campus);
+	            }
+	        }
+	    }
+
+	    if (cmbCampus.getItemCount() == 0) {
+	        cmbCampus.addItem("Nenhum campus disponível");
+	    }
 	}
 }
