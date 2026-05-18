@@ -1,8 +1,6 @@
 package view;
 
 import java.awt.EventQueue;
-
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -13,15 +11,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
-
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JComboBox;
-import javax.swing.JTree;
-import javax.swing.JDesktopPane;
 import javax.swing.JScrollPane;
-import java.awt.TextField;
 import javax.swing.JTabbedPane;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -30,890 +24,838 @@ import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JSeparator;
-import javax.swing.JScrollBar;
-import javax.swing.JToggleButton;
 import javax.swing.ButtonGroup;
 import javax.swing.KeyStroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
 import javax.swing.JFormattedTextField;
-
 import javax.swing.ImageIcon;
-import java.awt.Color;
 import javax.swing.SwingConstants;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.BorderFactory;
-
 import java.util.List;
-import javax.swing.JOptionPane;
 import model.Curso;
 import dao.AlunoDAO;
 import dao.CursoDAO;
-
-// Importações do modelo do grupo
 import model.Aluno;
 import model.Desempenho;
 
 public class GUI extends JFrame {
 
-	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
-	private JTextField txtRa;
-	private JTextField textField_1;
-	private JTextField textField_3;
-	private JTextField textField_4;
-	private JTextField textField_6;
-	private JTextField textField_7;
-	private JTextField txtRaNotas;
-	private JTextField txtNomeNotas;
-	private JTextField txtCursoNotas;
-	private JTextField txtFaltas;
-	private JComboBox cmbCursos;
-	private JComboBox cmbCampus;
-	private JRadioButton rdbtnMatutino;
-	private JRadioButton rdbtnVespertino;
-	private JRadioButton rdbtnNoturno;
-	private JComboBox cmbUF; 
-	private java.util.List<String> todosCampi;
-	private JFormattedTextField fldDataNasc;
-	private JFormattedTextField fldCpf;
-	private final ButtonGroup buttonGroup = new ButtonGroup();
-	
-	// Componentes globais da aba Boletim
-	private JLabel lblRgmBoletim;
-	private JLabel lblNomeBoletim;
-	private JLabel lblCursoBoletim;
-	private JTable tabelaBoletim;
-	private DefaultTableModel modeloTabelaBoletim;
+    private static final long serialVersionUID = 1L;
+    private JPanel contentPane;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					GUI frame = new GUI();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+    // Aba Dados Pessoais
+    private JTextField txtRa;
+    private JTextField textField_1;  // Nome
+    private JTextField textField_3;  // Endereço
+    private JTextField textField_4;  // Email
+    private JTextField textField_6;  // Município
+    private JTextField textField_7;  // Celular
+    private JFormattedTextField fldDataNasc;
+    private JFormattedTextField fldCpf;
+    private JComboBox cmbUF;
 
-	/**
-	 * Create the frame.
-	 */
-	public GUI() throws Exception {
-		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1169, 627);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(235, 117, 687,349);
-		contentPane.add(tabbedPane);
-		
-		//Instanciando os paineis
-		JPanel panelDados = new JPanel();
-		JPanel panelCurso = new JPanel();
-		JPanel  panelNotasFaltas= new JPanel();
-		JPanel panelBoletim=new JPanel();
-		
-		//Definindo os paineis de navegação 
-		panelDados.setLayout(null);
-		panelCurso.setLayout(null);
-		panelNotasFaltas.setLayout(null);
-		panelBoletim.setLayout(null);
-		
-		//ABA DADOS PESSOAIS**************
-		tabbedPane.addTab("Dados Pessoais",null,panelDados,"Informações do Aluno");
-		
-		JLabel lblNewLabel = new JLabel("RA");
-		lblNewLabel.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblNewLabel.setBounds(21, 24, 46, 14);
-		panelDados.add(lblNewLabel);
-		
-		txtRa = new JTextField();
-		txtRa.setBounds(51, 22, 158, 20);
-		panelDados.add(txtRa);
-		txtRa.setColumns(10);
-		
-		JLabel lblNewLabel_1 = new JLabel("Nome");
-		lblNewLabel_1.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblNewLabel_1.setBounds(21, 66, 57, 14);
-		panelDados.add(lblNewLabel_1);
-		
-		JLabel lblNewLabel_1_1 = new JLabel("Data de Nascimento");
-		lblNewLabel_1_1.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblNewLabel_1_1.setBounds(21, 114, 162, 14);
-		panelDados.add(lblNewLabel_1_1);
-		
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
-		textField_1.setBounds(77, 64, 158, 20);
-		panelDados.add(textField_1);
-		
-		JLabel lblNewLabel_1_1_1 = new JLabel("Email");
-		lblNewLabel_1_1_1.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblNewLabel_1_1_1.setBounds(21, 174, 57, 14);
-		panelDados.add(lblNewLabel_1_1_1);
-		
-		textField_3 = new JTextField();
-		textField_3.setColumns(10);
-		textField_3.setBounds(107, 211, 158, 20);
-		panelDados.add(textField_3);
-		
-		textField_4 = new JTextField();
-		textField_4.setColumns(10);
-		textField_4.setBounds(77, 172, 158, 20);
-		panelDados.add(textField_4);
-		
-		JLabel lblNewLabel_1_2 = new JLabel("Endereço");
-		lblNewLabel_1_2.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblNewLabel_1_2.setBounds(21, 213, 89, 14);
-		panelDados.add(lblNewLabel_1_2);
-		
-		JLabel lblNewLabel_1_1_2 = new JLabel("CPF");
-		lblNewLabel_1_1_2.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblNewLabel_1_1_2.setBounds(370, 24, 46, 14);
-		panelDados.add(lblNewLabel_1_1_2);
-		
-		JSeparator separator = new JSeparator();
-		separator.setBounds(0, 149, 666, 14);
-		panelDados.add(separator);
-		
-		JLabel lblNewLabel_1_1_1_1 = new JLabel("Município");
-		lblNewLabel_1_1_1_1.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblNewLabel_1_1_1_1.setBounds(359, 168, 83, 26);
-		panelDados.add(lblNewLabel_1_1_1_1);
-		
-		textField_6 = new JTextField();
-		textField_6.setColumns(10);
-		textField_6.setBounds(452, 172, 158, 20);
-		panelDados.add(textField_6);
-		
-		JLabel lblNewLabel_1_2_1 = new JLabel("UF");
-		lblNewLabel_1_2_1.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblNewLabel_1_2_1.setBounds(359, 209, 40, 26);
-		panelDados.add(lblNewLabel_1_2_1);
-		
-		cmbUF = new JComboBox(new String[]{"SP", "RJ", "MG", "ES", "RS"});
-		cmbUF.setBounds(408, 206, 65, 31);
-		panelDados.add(cmbUF);
+    // Aba Cursos
+    private JComboBox cmbCursos;
+    private JComboBox cmbCampus;
+    private JRadioButton rdbtnMatutino;
+    private JRadioButton rdbtnVespertino;
+    private JRadioButton rdbtnNoturno;
+    private final ButtonGroup buttonGroup = new ButtonGroup();
 
-		// Filtro: ao trocar a UF, recarrega o cmbCampus com apenas os campi daquele estado
-		cmbUF.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        filtrarCampiPorUF();
-		    }
-		});
-		
-		JLabel lblNewLabel_1_1_2_1 = new JLabel("Celular");
-		lblNewLabel_1_1_2_1.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblNewLabel_1_1_2_1.setBounds(370, 68, 57, 14);
-		panelDados.add(lblNewLabel_1_1_2_1);
-		
-		textField_7 = new JTextField();
-		textField_7.setColumns(10);
-		textField_7.setBounds(437, 64, 158, 20);
-		panelDados.add(textField_7);
-		
-		try {
-		    fldDataNasc = new JFormattedTextField(new MaskFormatter("##/##/####"));
-		    fldDataNasc.setBounds(181, 112, 65, 20);
-		    panelDados.add(fldDataNasc);
+    // Aba Notas e Faltas
+    private JTextField txtRaNotas;
+    private JTextField txtNomeNotas;
+    private JTextField txtCursoNotas;
+    private JTextField txtFaltas;
 
-		    fldCpf = new JFormattedTextField(new MaskFormatter("###.###.###-##"));
-		    fldCpf.setBounds(410, 22, 109, 20);
-		    panelDados.add(fldCpf);
-		} catch (Exception e) {
-		    System.err.println("Erro ao inicializar máscaras: " + e.getMessage());
-		}
-		
-		JFormattedTextField formattedTextField = new JFormattedTextField(new MaskFormatter("##/##/####"));
-		formattedTextField.setBounds(181, 112, 65, 20);
-		panelDados.add(formattedTextField);
-		
-		JFormattedTextField formattedTextField_1 = new JFormattedTextField(new MaskFormatter("###.###.###-##"));
-		formattedTextField_1.setBounds(410, 22, 109, 20);
-		panelDados.add(formattedTextField_1);
-		tabbedPane.addTab("Cursos",null,panelCurso,"Curso do Aluno");
-		
-		JLabel lblCurso = new JLabel("Curso");
-		lblCurso.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblCurso.setBounds(10, 31, 76, 14);
-		panelCurso.add(lblCurso);
-		
-		JLabel lblCampus = new JLabel("Campus");
-		lblCampus.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblCampus.setBounds(10, 64, 76, 28);
-		panelCurso.add(lblCampus);
-		
-		JLabel lblPeriodo = new JLabel("Período");
-		lblPeriodo.setFont(new Font("Dubai", Font.PLAIN, 18));
-		lblPeriodo.setBounds(10, 112, 76, 14);
-		panelCurso.add(lblPeriodo);
-		
-		cmbCursos = new JComboBox();
-		cmbCursos.setBounds(96, 28, 286, 22);
-		panelCurso.add(cmbCursos);
-		
-		cmbCampus = new JComboBox();
-		cmbCampus.setBounds(96, 70, 286, 22);
-		panelCurso.add(cmbCampus);
-		
-		// Remova o "JRadioButton" do início destas linhas:
-		rdbtnMatutino = new JRadioButton("Matutino");
-		buttonGroup.add(rdbtnMatutino);
-		rdbtnMatutino.setFont(new Font("Dubai", Font.PLAIN, 14));
-		rdbtnMatutino.setBounds(106, 109, 79, 23);
-		panelCurso.add(rdbtnMatutino);
-		
-		rdbtnVespertino = new JRadioButton("Vespertino");
-		buttonGroup.add(rdbtnVespertino);
-		rdbtnVespertino.setFont(new Font("Dubai", Font.PLAIN, 14));
-		rdbtnVespertino.setBounds(187, 109, 89, 23);
-		panelCurso.add(rdbtnVespertino);
-		
-		rdbtnNoturno = new JRadioButton("Noturno");
-		buttonGroup.add(rdbtnNoturno);
-		rdbtnNoturno.setFont(new Font("Dubai", Font.PLAIN, 14));
-		rdbtnNoturno.setBounds(278, 109, 74, 23);
-		panelCurso.add(rdbtnNoturno);
+    // Aba Boletim
+    private JLabel lblRgmBoletim;
+    private JLabel lblNomeBoletim;
+    private JLabel lblCursoBoletim;
+    private JTable tabelaBoletim;
+    private DefaultTableModel modeloTabelaBoletim;
 
-		
-		JButton btnSalvarCursos= new JButton("");
-		btnSalvarCursos.setIcon(new ImageIcon(GUI.class.getResource("/images/save_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
-		btnSalvarCursos.setBounds(32, 265, 89, 45);
-		panelCurso.add(btnSalvarCursos);
-		
-		btnSalvarCursos.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        try {
-<<<<<<< Updated upstream
-		            //Valida o RA
-		            String ra = txtRa.getText().trim();
-		            if (ra.isEmpty()) {
-=======
-		            // Coleta dados da aba Dados Pessoais
-		            String ra        = textField.getText().trim();
-		            String nome      = textField_1.getText().trim();
-		            String email     = textField_4.getText().trim();
-		            String endereco  = textField_3.getText().trim();
-		            String municipio = textField_6.getText().trim();
-		            String celular   = textField_7.getText().trim();
-		            String uf        = (cmbUF.getSelectedItem() != null) ? cmbUF.getSelectedItem().toString() : "";
-		            String cpf       = (fldCpf != null) ? fldCpf.getText().trim() : "";
-		            String dataNascStr = (fldDataNasc != null) ? fldDataNasc.getText().trim() : "";
+    // Filtro UF → Campus
+    private java.util.List<String> todosCampi;
+    private java.util.Map<String, java.util.List<String>> mapaUFCampi;
 
-		            // Validações dos dados pessoais
-		            if (ra.isEmpty() || nome.isEmpty()) {
->>>>>>> Stashed changes
-		                JOptionPane.showMessageDialog(null,
-		                    "Preencha pelo menos o RA e o Nome na aba 'Dados Pessoais'.");
-		                return;
-		            }
+    // =========================================================
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    GUI frame = new GUI();
+                    frame.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
-		            // Converte a data de nascimento de dd/MM/yyyy para java.sql.Date
-		            java.sql.Date dataNasc = null;
-		            if (!dataNascStr.replace("/", "").trim().isEmpty()) {
-		                try {
-		                    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
-		                    sdf.setLenient(false);
-		                    java.util.Date dataUtil = sdf.parse(dataNascStr);
-		                    dataNasc = new java.sql.Date(dataUtil.getTime());
-		                } catch (Exception ex) {
-		                    JOptionPane.showMessageDialog(null,
-		                        "Data de Nascimento inválida. Use o formato dd/MM/aaaa.");
-		                    return;
-		                }
-		            } else {
-		                JOptionPane.showMessageDialog(null, "Informe a Data de Nascimento.");
-		                return;
-		            }
+    // =========================================================
+    public GUI() throws Exception {
 
-		            // Coleta dados da aba Cursos
-		            if (cmbCursos.getSelectedItem() == null || cmbCampus.getSelectedItem() == null) {
-		                JOptionPane.showMessageDialog(null, "Selecione um Curso e um Campus.");
-		                return;
-		            }
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(100, 100, 1169, 627);
+        contentPane = new JPanel();
+        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        setContentPane(contentPane);
+        contentPane.setLayout(null);
 
-		            String cursoSelecionado  = cmbCursos.getSelectedItem().toString();
-		            String campusSelecionado = cmbCampus.getSelectedItem().toString();
+        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+        tabbedPane.setBounds(235, 117, 687, 349);
+        contentPane.add(tabbedPane);
 
-		            String periodoSelecionado = "";
-		            if      (rdbtnMatutino.isSelected())   periodoSelecionado = "Matutino";
-		            else if (rdbtnVespertino.isSelected())  periodoSelecionado = "Vespertino";
-		            else if (rdbtnNoturno.isSelected())     periodoSelecionado = "Noturno";
+        JPanel panelDados        = new JPanel();
+        JPanel panelCurso        = new JPanel();
+        JPanel panelNotasFaltas  = new JPanel();
+        JPanel panelBoletim      = new JPanel();
 
-		            if (periodoSelecionado.isEmpty()) {
-		                JOptionPane.showMessageDialog(null, "Selecione um Período.");
-		                return;
-		            }
+        panelDados.setLayout(null);
+        panelCurso.setLayout(null);
+        panelNotasFaltas.setLayout(null);
+        panelBoletim.setLayout(null);
 
-		            // Descobre o codCurso
-		            dao.CursoDAO cursoDAO = new dao.CursoDAO();
-		            int codCurso = cursoDAO.descobrirCodCurso(
-		                cursoSelecionado, campusSelecionado, periodoSelecionado);
+        // =================================================
+        // ABA DADOS PESSOAIS
+        // =================================================
+        tabbedPane.addTab("Dados Pessoais", null, panelDados, "Informações do Aluno");
 
-		            if (codCurso == 0) {
-		                JOptionPane.showMessageDialog(null,
-		                    "Combinação de Curso, Campus e Período não encontrada no sistema.");
-		                return;
-		            }
+        JLabel lblNewLabel = new JLabel("RA");
+        lblNewLabel.setFont(new Font("Dubai", Font.PLAIN, 18));
+        lblNewLabel.setBounds(21, 24, 46, 14);
+        panelDados.add(lblNewLabel);
 
-		            // Monta o objeto Aluno completo
-		            model.Aluno aluno = new model.Aluno(
-		                nome, ra, cpf, dataNasc,
-		                email, municipio, uf,
-		                String.valueOf(codCurso),
-		                endereco, celular
-		            );
+        txtRa = new JTextField();
+        txtRa.setBounds(51, 22, 158, 20);
+        txtRa.setColumns(10);
+        panelDados.add(txtRa);
 
-		            // Insere no banco
-		            dao.AlunoDAO alunoDAO = new dao.AlunoDAO();
-		            alunoDAO.salvar(aluno);
+        JLabel lblNewLabel_1 = new JLabel("Nome");
+        lblNewLabel_1.setFont(new Font("Dubai", Font.PLAIN, 18));
+        lblNewLabel_1.setBounds(21, 66, 57, 14);
+        panelDados.add(lblNewLabel_1);
 
-		            JOptionPane.showMessageDialog(null,
-		                "Aluno cadastrado com sucesso!\n\n" +
-		                "RA: "      + ra               + "\n" +
-		                "Nome: "    + nome             + "\n" +
-		                "Curso: "   + cursoSelecionado  + "\n" +
-		                "Campus: "  + campusSelecionado + "\n" +
-		                "Período: " + periodoSelecionado);
+        textField_1 = new JTextField();
+        textField_1.setColumns(10);
+        textField_1.setBounds(77, 64, 158, 20);
+        panelDados.add(textField_1);
 
-		        } catch (Exception ex) {
-		            JOptionPane.showMessageDialog(null,
-		                "Erro ao cadastrar aluno: " + ex.getMessage());
-		        }
-		    }
-		});
-		
-		JButton btnAlterarCursos = new JButton("");
-		btnAlterarCursos.setIcon(new ImageIcon(GUI.class.getResource("/images/update_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
-		btnAlterarCursos.setBounds(158, 265, 89, 45);
-		panelCurso.add(btnAlterarCursos);
-		
-		btnAlterarCursos.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        try {
-<<<<<<< Updated upstream
-		            //Valida o RA (vem da aba Dados Pessoais)
-		            String ra = txtRa.getText().trim();
-=======
-		            // Coleta todos os dados para montar o Aluno atualizado
-		            String ra        = textField.getText().trim();
-		            String nome      = textField_1.getText().trim();
-		            String email     = textField_4.getText().trim();
-		            String endereco  = textField_3.getText().trim();
-		            String municipio = textField_6.getText().trim();
-		            String celular   = textField_7.getText().trim();
-		            String uf        = (cmbUF.getSelectedItem() != null) ? cmbUF.getSelectedItem().toString() : "";
-		            String cpf       = (fldCpf != null) ? fldCpf.getText().trim() : "";
-		            String dataNascStr = (fldDataNasc != null) ? fldDataNasc.getText().trim() : "";
+        JLabel lblNewLabel_1_1 = new JLabel("Data de Nascimento");
+        lblNewLabel_1_1.setFont(new Font("Dubai", Font.PLAIN, 18));
+        lblNewLabel_1_1.setBounds(21, 114, 162, 14);
+        panelDados.add(lblNewLabel_1_1);
 
->>>>>>> Stashed changes
-		            if (ra.isEmpty()) {
-		                JOptionPane.showMessageDialog(null,
-		                    "Informe o RA do aluno na aba 'Dados Pessoais'.");
-		                return;
-		            }
+        JLabel lblNewLabel_1_1_1 = new JLabel("Email");
+        lblNewLabel_1_1_1.setFont(new Font("Dubai", Font.PLAIN, 18));
+        lblNewLabel_1_1_1.setBounds(21, 174, 57, 14);
+        panelDados.add(lblNewLabel_1_1_1);
 
-		            // Converte a data
-		            java.sql.Date dataNasc = null;
-		            if (!dataNascStr.replace("/", "").trim().isEmpty()) {
-		                try {
-		                    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
-		                    sdf.setLenient(false);
-		                    dataNasc = new java.sql.Date(sdf.parse(dataNascStr).getTime());
-		                } catch (Exception ex) {
-		                    JOptionPane.showMessageDialog(null, "Data de Nascimento inválida.");
-		                    return;
-		                }
-		            }
+        textField_4 = new JTextField();
+        textField_4.setColumns(10);
+        textField_4.setBounds(77, 172, 158, 20);
+        panelDados.add(textField_4);
 
-		            // Valida seleção de curso
-		            if (cmbCursos.getSelectedItem() == null || cmbCampus.getSelectedItem() == null) {
-		                JOptionPane.showMessageDialog(null, "Selecione um Curso e um Campus.");
-		                return;
-		            }
+        JLabel lblNewLabel_1_2 = new JLabel("Endereço");
+        lblNewLabel_1_2.setFont(new Font("Dubai", Font.PLAIN, 18));
+        lblNewLabel_1_2.setBounds(21, 213, 89, 14);
+        panelDados.add(lblNewLabel_1_2);
 
-		            String cursoSelecionado  = cmbCursos.getSelectedItem().toString();
-		            String campusSelecionado = cmbCampus.getSelectedItem().toString();
+        textField_3 = new JTextField();
+        textField_3.setColumns(10);
+        textField_3.setBounds(107, 211, 158, 20);
+        panelDados.add(textField_3);
 
-		            String periodoSelecionado = "";
-		            if      (rdbtnMatutino.isSelected())   periodoSelecionado = "Matutino";
-		            else if (rdbtnVespertino.isSelected())  periodoSelecionado = "Vespertino";
-		            else if (rdbtnNoturno.isSelected())     periodoSelecionado = "Noturno";
+        JLabel lblNewLabel_1_1_2 = new JLabel("CPF");
+        lblNewLabel_1_1_2.setFont(new Font("Dubai", Font.PLAIN, 18));
+        lblNewLabel_1_1_2.setBounds(370, 24, 46, 14);
+        panelDados.add(lblNewLabel_1_1_2);
 
-		            if (periodoSelecionado.isEmpty()) {
-		                JOptionPane.showMessageDialog(null, "Selecione um Período.");
-		                return;
-		            }
+        JSeparator separator = new JSeparator();
+        separator.setBounds(0, 149, 666, 14);
+        panelDados.add(separator);
 
-		            // Descobre o codCurso
-		            dao.CursoDAO cursoDAO = new dao.CursoDAO();
-		            int codCurso = cursoDAO.descobrirCodCurso(
-		                cursoSelecionado, campusSelecionado, periodoSelecionado);
+        JLabel lblNewLabel_1_1_1_1 = new JLabel("Município");
+        lblNewLabel_1_1_1_1.setFont(new Font("Dubai", Font.PLAIN, 18));
+        lblNewLabel_1_1_1_1.setBounds(359, 168, 83, 26);
+        panelDados.add(lblNewLabel_1_1_1_1);
 
-		            if (codCurso == 0) {
-		                JOptionPane.showMessageDialog(null,
-		                    "Combinação de Curso, Campus e Período não encontrada.");
-		                return;
-		            }
+        textField_6 = new JTextField();
+        textField_6.setColumns(10);
+        textField_6.setBounds(452, 172, 158, 20);
+        panelDados.add(textField_6);
 
-		            // Confirmação
-		            int confirmacao = JOptionPane.showConfirmDialog(null,
-		                "Confirma a alteração do aluno RA " + ra + "?\n\n" +
-		                "Curso:   " + cursoSelecionado  + "\n" +
-		                "Campus:  " + campusSelecionado + "\n" +
-		                "Período: " + periodoSelecionado,
-		                "Confirmar Alteração",
-		                JOptionPane.YES_NO_OPTION);
+        JLabel lblNewLabel_1_2_1 = new JLabel("UF");
+        lblNewLabel_1_2_1.setFont(new Font("Dubai", Font.PLAIN, 18));
+        lblNewLabel_1_2_1.setBounds(359, 209, 40, 26);
+        panelDados.add(lblNewLabel_1_2_1);
 
-		            if (confirmacao != JOptionPane.YES_OPTION) return;
+        cmbUF = new JComboBox(new String[]{"SP", "RJ", "MG", "ES", "RS"});
+        cmbUF.setBounds(408, 206, 65, 31);
+        panelDados.add(cmbUF);
+        cmbUF.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                filtrarCampiPorUF();
+            }
+        });
 
-		            // Monta o Aluno com os dados atualizados
-		            model.Aluno aluno = new model.Aluno(
-		                nome, ra, cpf, dataNasc,
-		                email, municipio, uf,
-		                String.valueOf(codCurso),
-		                endereco, celular
-		            );
+        JLabel lblNewLabel_1_1_2_1 = new JLabel("Celular");
+        lblNewLabel_1_1_2_1.setFont(new Font("Dubai", Font.PLAIN, 18));
+        lblNewLabel_1_1_2_1.setBounds(370, 68, 57, 14);
+        panelDados.add(lblNewLabel_1_1_2_1);
 
-		            // Executa o UPDATE completo
-		            dao.AlunoDAO alunoDAO = new dao.AlunoDAO();
-		            alunoDAO.atualizar(aluno);
+        textField_7 = new JTextField();
+        textField_7.setColumns(10);
+        textField_7.setBounds(437, 64, 158, 20);
+        panelDados.add(textField_7);
 
-		            JOptionPane.showMessageDialog(null, "Aluno atualizado com sucesso!");
+        // Campos formatados globais (sem duplicata)
+        try {
+            fldDataNasc = new JFormattedTextField(new MaskFormatter("##/##/####"));
+            fldDataNasc.setBounds(181, 112, 65, 20);
+            panelDados.add(fldDataNasc);
 
-		        } catch (Exception ex) {
-		            JOptionPane.showMessageDialog(null,
-		                "Erro ao alterar aluno: " + ex.getMessage());
-		        }
-		    }
-		});
-		
-		JButton btnConsultarCursos = new JButton("");
-		btnConsultarCursos.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String ra = txtRa.getText().trim();
+            fldCpf = new JFormattedTextField(new MaskFormatter("###.###.###-##"));
+            fldCpf.setBounds(410, 22, 109, 20);
+            panelDados.add(fldCpf);
+        } catch (Exception e) {
+            System.err.println("Erro ao inicializar máscaras: " + e.getMessage());
+        }
 
-				if(ra.isEmpty()) {
-				    JOptionPane.showMessageDialog(null, "Campo RA não pode estar vazio!");
-				    return;
-				} else {
-				    AlunoDAO dao = new AlunoDAO();
-				    Aluno aluno = new Aluno();
-				    
-				    // Como já pegamos a string limpa lá em cima, passamos direto aqui
-				    
-				    
-				    try {
-					
-				    aluno =	dao.procurarAluno(ra);
-				    aluno.getNome();
-				    aluno.getMunicipio();
-				    aluno.getEmail();
-				    aluno.getCelular();
-				    aluno.getCodCurso();
-				    aluno.getEndereco();
-				    aluno.getCpf();
-				    aluno.getDataNasc();
-				    aluno.getUf();
-				    
-					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				    
-				   
-				}
-				
-			}
-		});
-		btnConsultarCursos.setIcon(new ImageIcon(GUI.class.getResource("/images/search_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
-		btnConsultarCursos.setBounds(289, 265, 89, 45);
-		panelCurso.add(btnConsultarCursos);
-		
-		JButton btnExcluirCursos = new JButton("");
-		btnExcluirCursos.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String ra = txtRa.getText().trim();
+        // =================================================
+        // ABA CURSOS
+        // =================================================
+        tabbedPane.addTab("Cursos", null, panelCurso, "Curso do Aluno");
 
-				if(ra.isEmpty()) {
-				    JOptionPane.showMessageDialog(null, "Campo RA não pode estar vazio!");
-				    return;
-				} else {
-				    AlunoDAO dao = new AlunoDAO();
-				    Aluno aluno = new Aluno();
-				    
-				    // Como já pegamos a string limpa lá em cima, passamos direto aqui
-				    aluno.setRa(ra); 
-				    
-				    try {
-						dao.excluir(aluno);
-					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				    
-				   
-				}
-				
-			}
-		});
-		btnExcluirCursos.setIcon(new ImageIcon(GUI.class.getResource("/images/delete_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
-		btnExcluirCursos.setBounds(419, 265, 89, 45);
-		panelCurso.add(btnExcluirCursos);
-		
-		JButton btnSairCursos = new JButton("");
-		btnSairCursos.setIcon(new ImageIcon(GUI.class.getResource("/images/exit_to_app_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
-		btnSairCursos.setBounds(549, 265, 89, 45);
-		panelCurso.add(btnSairCursos);
-		
-		JButton btnSalvar2 = new JButton("");
-		btnSalvar2.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			}
-		});
-		
-		//ABA NOTAS E FALTAS*****************
-		tabbedPane.addTab("Notas e Faltas",null,panelNotasFaltas,"Notas e faltas do aluno");
-		JLabel lblRa = new JLabel("RA");
-		lblRa.setFont(new Font("Dialog", Font.PLAIN, 18));
-		lblRa.setBounds(10, 25, 46, 14);
-		panelNotasFaltas.add(lblRa);
-		
-		JLabel lblDisciplina = new JLabel("Disciplina");
-		lblDisciplina.setFont(new Font("Dialog", Font.PLAIN, 18));
-		lblDisciplina.setBounds(10, 118, 88, 24);
-		panelNotasFaltas.add(lblDisciplina);
-		
-		JComboBox cmbCursoNotas = new JComboBox();
-		cmbCursoNotas.setBounds(99, 122, 383, 22);
-		panelNotasFaltas.add(cmbCursoNotas);
-		
-		JLabel lblSemestre = new JLabel("Semestre");
-		lblSemestre.setFont(new Font("Dialog", Font.PLAIN, 18));
-		lblSemestre.setBounds(10, 181, 81, 24);
-		panelNotasFaltas.add(lblSemestre);
-		
-		JComboBox cmbSemestre = new JComboBox();
-		cmbSemestre.setBounds(99, 185, 94, 22);
-		panelNotasFaltas.add(cmbSemestre);
-		
-		JLabel lblNota = new JLabel("Nota");
-		lblNota.setFont(new Font("Dialog", Font.PLAIN, 18));
-		lblNota.setBounds(234, 181, 38, 24);
-		panelNotasFaltas.add(lblNota);
-		
-		JComboBox cmbSemestre_1 = new JComboBox();
-		cmbSemestre_1.setBounds(282, 185, 53, 22);
-		panelNotasFaltas.add(cmbSemestre_1);
-		
-		JLabel lblFaltas = new JLabel("Faltas");
-		lblFaltas.setFont(new Font("Dialog", Font.PLAIN, 18));
-		lblFaltas.setBounds(389, 181, 53, 24);
-		panelNotasFaltas.add(lblFaltas);
-		
-		JButton btnExcluirNotas = new JButton("");
-		btnExcluirNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/delete_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
-		btnExcluirNotas.setBounds(413, 268, 89, 45);
-		panelNotasFaltas.add(btnExcluirNotas);
-		
-		JButton btnSairNotas = new JButton("");
-		btnSairNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/exit_to_app_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
-		btnSairNotas.setBounds(543, 268, 89, 45);
-		panelNotasFaltas.add(btnSairNotas);
-		
-		JButton btnConsultarNotas = new JButton("");
-		btnConsultarNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/search_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
-		btnConsultarNotas.setBounds(283, 268, 89, 45);
-		panelNotasFaltas.add(btnConsultarNotas);
-		
-		JButton btnAlterarNotas = new JButton("");
-		btnAlterarNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/update_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
-		btnAlterarNotas.setBounds(152, 268, 89, 45);
-		panelNotasFaltas.add(btnAlterarNotas);
-		
-		JButton btnSalvarNotas = new JButton("");
-		btnSalvarNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/save_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
-		btnSalvarNotas.setBounds(26, 268, 89, 45);
-		panelNotasFaltas.add(btnSalvarNotas);
-		
-		txtRaNotas = new JTextField();
-		txtRaNotas.setColumns(10);
-		txtRaNotas.setBounds(43, 25, 198, 20);
-		panelNotasFaltas.add(txtRaNotas);
-		
-		txtNomeNotas = new JTextField("Deverá mostrar o nome do Aluno");
-		txtNomeNotas.setEditable(false);
-		txtNomeNotas.setColumns(10);
-		txtNomeNotas.setBounds(284, 25, 369, 20);
-		panelNotasFaltas.add(txtNomeNotas);
-		
-		txtCursoNotas = new JTextField("Deverá mostrar o curso do Aluno");
-		txtCursoNotas.setEditable(false);
-		txtCursoNotas.setColumns(10);
-		txtCursoNotas.setBounds(26, 70, 627, 20);
-		panelNotasFaltas.add(txtCursoNotas);
-		
-		txtFaltas = new JTextField();
-		txtFaltas.setColumns(10);
-		txtFaltas.setBounds(445, 186, 102, 20);
-		panelNotasFaltas.add(txtFaltas);
-		
-		//ABA BOLETIM***********************
-		tabbedPane.addTab("Boletim",null,panelBoletim,"Boletim Completo");
-		
-		// Painel contêiner superior para os dados básicos do Aluno
-		JPanel painelFichaAluno = new JPanel();
-		painelFichaAluno.setLayout(null);
-		painelFichaAluno.setBorder(BorderFactory.createTitledBorder("Informações Acadêmicas"));
-		painelFichaAluno.setBounds(10, 11, 662, 85);
-		panelBoletim.add(painelFichaAluno);
-		
-		lblRgmBoletim = new JLabel("RA: ");
-		lblRgmBoletim.setFont(new Font("Dubai", Font.BOLD, 14));
-		lblRgmBoletim.setBounds(15, 20, 600, 20);
-		painelFichaAluno.add(lblRgmBoletim);
-		
-		lblNomeBoletim = new JLabel("Nome: ");
-		lblNomeBoletim.setFont(new Font("Dubai", Font.BOLD, 14));
-		lblNomeBoletim.setBounds(15, 40, 600, 20);
-		painelFichaAluno.add(lblNomeBoletim);
-		
-		lblCursoBoletim = new JLabel("Curso: ");
-		lblCursoBoletim.setFont(new Font("Dubai", Font.BOLD, 14));
-		lblCursoBoletim.setBounds(15, 60, 600, 20);
-		painelFichaAluno.add(lblCursoBoletim);
-		
-		// Definição da tabela e bloqueio de edição manual nas células pelo usuário
-		String[] colunasBoletim = {"Disciplina / Matéria", "Nota Final", "Faltas Totais"};
-		modeloTabelaBoletim = new DefaultTableModel(colunasBoletim, 0) {
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return false;
-			}
-		};
-		
-		tabelaBoletim = new JTable(modeloTabelaBoletim);
-		tabelaBoletim.setRowHeight(22);
-		tabelaBoletim.setFillsViewportHeight(true);
-		
-		// Alinhamento centralizado para as colunas de Notas e Faltas
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-		tabelaBoletim.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
-		tabelaBoletim.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
-		
-		// Barra de rolagem para a tabela acoplada via posicionamento absoluto
-		JScrollPane scrollTabelaBoletim = new JScrollPane(tabelaBoletim);
-		scrollTabelaBoletim.setBounds(10, 107, 662, 203);
-		panelBoletim.add(scrollTabelaBoletim);
-		
-		// Ouvinte que intercepta o momento exato em que a aba "Boletim" ganha foco
-		tabbedPane.addChangeListener(e -> {
-			if (tabbedPane.getSelectedIndex() == 3) { // Índice 3 é a aba Boletim
-				String raDigitado = txtRaNotas.getText().trim();
-				
-				if (!raDigitado.isEmpty()) {
-					
-					// O AlunoDAO será chamado aqui para alimentar a tabela de forma automática.
-					/*
-					try {
-						dao.AlunoDAO daoAluno = new dao.AlunoDAO();
-						java.util.List<Desempenho> notas = daoAluno.buscarBoletim(raDigitado);
-						atualizarInterfaceBoletim(notas);
-					} catch(Exception ex) {
-						ex.printStackTrace();
-					}
-					*/
-				}
-			}
-		});
-		
-		contentPane.add(tabbedPane);
-		
-		JMenuBar menuBar = new JMenuBar();
-		menuBar.setBounds(0, 0, 1121, 22);
-		contentPane.add(menuBar);
-		
-		JMenu mnNewMenu = new JMenu("Aluno");
-		menuBar.add(mnNewMenu);
-		
-		JMenuItem mntmNewMenuItem = new JMenuItem("Salvar");
-		mntmNewMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK));
-		mnNewMenu.add(mntmNewMenuItem);
-		
-		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Consultar");
-		mnNewMenu.add(mntmNewMenuItem_1);
-		
-		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Alterar");
-		mnNewMenu.add(mntmNewMenuItem_2);
-		
-		JMenuItem mntmNewMenuItem_7 = new JMenuItem("Excluir");
-		mnNewMenu.add(mntmNewMenuItem_7);
-		
-		JSeparator separator_1 = new JSeparator();
-		mnNewMenu.add(separator_1);
-		
-		JMenuItem mntmNewMenuItem_3 = new JMenuItem("Sair");
-		mntmNewMenuItem_3.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
-		mntmNewMenuItem_3.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
-		mnNewMenu.add(mntmNewMenuItem_3);
-		
-		JMenu mnNewMenu_1 = new JMenu("Notas e faltas");
-		menuBar.add(mnNewMenu_1);
-		
-		JMenuItem mntmNewMenuItem_8 = new JMenuItem("Salvar ");
-		mnNewMenu_1.add(mntmNewMenuItem_8);
-		
-		JMenuItem mntmNewMenuItem_9 = new JMenuItem("Alterar");
-		mnNewMenu_1.add(mntmNewMenuItem_9);
-		
-		JMenuItem mntmNewMenuItem_10 = new JMenuItem("Excluir");
-		mnNewMenu_1.add(mntmNewMenuItem_10);
-		
-		JMenuItem mntmNewMenuItem_5 = new JMenuItem("Consulte");
-		mnNewMenu_1.add(mntmNewMenuItem_5);
-		
-		JMenu mnNewMenu_2 = new JMenu("Ajuda");
-		menuBar.add(mnNewMenu_2);
-		
-		JMenuItem mntmNewMenuItem_6 = new JMenuItem("Sobre");
-		mntmNewMenuItem_6.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, "Informações do Menu");
-			}
-		});
-		mntmNewMenuItem_6.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_DOWN_MASK));
-		mnNewMenu_2.add(mntmNewMenuItem_6);
-		
-		carregarSeletoresCurso();
-	}
-	
-	private void carregarSeletoresCurso() {
-	    try {
-	        dao.CursoDAO cursoDAO = new dao.CursoDAO();
+        JLabel lblCurso = new JLabel("Curso");
+        lblCurso.setFont(new Font("Dubai", Font.PLAIN, 18));
+        lblCurso.setBounds(10, 31, 76, 14);
+        panelCurso.add(lblCurso);
 
-	        if (cmbCursos != null) cmbCursos.removeAllItems();
-	        if (cmbCampus != null) cmbCampus.removeAllItems();
+        JLabel lblCampus = new JLabel("Campus");
+        lblCampus.setFont(new Font("Dubai", Font.PLAIN, 18));
+        lblCampus.setBounds(10, 64, 76, 28);
+        panelCurso.add(lblCampus);
 
-	        java.util.List<model.Curso> listaCursos = cursoDAO.listarCursosParaCombo();
-	        if (listaCursos != null) {
-	            for (model.Curso c : listaCursos) {
-	                cmbCursos.addItem(c.getNomeCurso());
-	            }
-	        }
+        JLabel lblPeriodo = new JLabel("Período");
+        lblPeriodo.setFont(new Font("Dubai", Font.PLAIN, 18));
+        lblPeriodo.setBounds(10, 112, 76, 14);
+        panelCurso.add(lblPeriodo);
 
-	        // Salva lista completa antes de filtrar
-	        todosCampi = cursoDAO.listarCampiParaCombo();
+        cmbCursos = new JComboBox();
+        cmbCursos.setBounds(96, 28, 286, 22);
+        panelCurso.add(cmbCursos);
 
-	        // Inicializa o mapa e já aplica o filtro da UF padrão (SP)
-	        inicializarMapaUFCampi();
-	        filtrarCampiPorUF();
+        cmbCampus = new JComboBox();
+        cmbCampus.setBounds(96, 70, 286, 22);
+        panelCurso.add(cmbCampus);
 
-	    } catch (Exception e) {
-	        JOptionPane.showMessageDialog(null, "Erro ao popular seletores: " + e.getMessage());
-	    }
-	}
-	
-	/**
-	 * Função responsável por receber os dados processados do banco e atualizar a interface do Boletim.
-	 */
-	public void atualizarInterfaceBoletim(java.util.List<Desempenho> listaDesempenho) {
-		if (listaDesempenho == null || listaDesempenho.isEmpty()) {
-			return;
-		}
-		
-		modeloTabelaBoletim.setRowCount(0); 
-		
-		try {
-			// Usando a herança da classe Desempenho (extends Aluno) para preencher a ficha
-			Desempenho primeiroRegistro = listaDesempenho.get(0);
-			
-			lblRgmBoletim.setText("RA: " + primeiroRegistro.getRa()); 
-			lblNomeBoletim.setText("Nome: " + primeiroRegistro.getNome());
-			lblCursoBoletim.setText("Curso: " + primeiroRegistro.getCodCurso());
-			
-			// Varre a lista populando as linhas da tabela
-			for (Desempenho d : listaDesempenho) {
-				modeloTabelaBoletim.addRow(new Object[]{
-					d.getCodDisciplina(), 
-					d.getNota(),       
-					d.getFaltas()      
-				});
-			}
-			
-		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(this, "Erro ao popular a tabela de boletim: " + ex.getMessage());
-		}
-	}
-	
+        rdbtnMatutino = new JRadioButton("Matutino");
+        buttonGroup.add(rdbtnMatutino);
+        rdbtnMatutino.setFont(new Font("Dubai", Font.PLAIN, 14));
+        rdbtnMatutino.setBounds(106, 109, 79, 23);
+        panelCurso.add(rdbtnMatutino);
 
-	private static void addPopup(Component component, final JPopupMenu popup) {
-		component.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent e) {
-				if (e.isPopupTrigger()) {
-					showMenu(e);
-				}
-			}
-			public void mouseReleased(MouseEvent e) {
-				if (e.isPopupTrigger()) {
-					showMenu(e);
-				}
-			}
-			private void showMenu(MouseEvent e) {
-				popup.show(e.getComponent(), e.getX(), e.getY());
-			}
-		});
-	}
-	// Mapa que relaciona cada UF aos seus campi cadastrados no banco
-	private java.util.Map<String, java.util.List<String>> mapaUFCampi;
+        rdbtnVespertino = new JRadioButton("Vespertino");
+        buttonGroup.add(rdbtnVespertino);
+        rdbtnVespertino.setFont(new Font("Dubai", Font.PLAIN, 14));
+        rdbtnVespertino.setBounds(187, 109, 89, 23);
+        panelCurso.add(rdbtnVespertino);
 
-	private void inicializarMapaUFCampi() {
-	    mapaUFCampi = new java.util.HashMap<>();
+        rdbtnNoturno = new JRadioButton("Noturno");
+        buttonGroup.add(rdbtnNoturno);
+        rdbtnNoturno.setFont(new Font("Dubai", Font.PLAIN, 14));
+        rdbtnNoturno.setBounds(278, 109, 74, 23);
+        panelCurso.add(rdbtnNoturno);
 
-	    // Ajuste os nomes exatamente como estão gravados na coluna "campus" do banco
-	    mapaUFCampi.put("SP", java.util.Arrays.asList("Itaquera", "Guarulhos", "Ferraz de Vasconcelos"));
-	    mapaUFCampi.put("RJ", java.util.Arrays.asList("Rio de Janeiro", "Niteroi", "Campo Grande"));
-	    mapaUFCampi.put("MG", java.util.Arrays.asList("Belo Horizonte", "Uberlandia"));
-	    mapaUFCampi.put("ES", java.util.Arrays.asList("Vitoria"));
-	    mapaUFCampi.put("RS", java.util.Arrays.asList("Porto Alegre"));
-	}
+        // --- Botão SALVAR (INSERT completo) ---
+        JButton btnSalvarCursos = new JButton("");
+        btnSalvarCursos.setIcon(new ImageIcon(GUI.class.getResource("/images/save_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
+        btnSalvarCursos.setBounds(32, 265, 89, 45);
+        panelCurso.add(btnSalvarCursos);
+        btnSalvarCursos.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    // Coleta dados da aba Dados Pessoais
+                    String ra        = txtRa.getText().trim();
+                    String nome      = textField_1.getText().trim();
+                    String email     = textField_4.getText().trim();
+                    String endereco  = textField_3.getText().trim();
+                    String municipio = textField_6.getText().trim();
+                    String celular   = textField_7.getText().trim();
+                    String uf        = (cmbUF.getSelectedItem() != null) ? cmbUF.getSelectedItem().toString() : "";
+                    String cpf       = (fldCpf != null) ? fldCpf.getText().trim() : "";
+                    String dataNascStr = (fldDataNasc != null) ? fldDataNasc.getText().trim() : "";
 
-	private void filtrarCampiPorUF() {
-	    if (cmbUF == null || cmbCampus == null || mapaUFCampi == null) return;
+                    // Validações básicas
+                    if (ra.isEmpty() || nome.isEmpty()) {
+                        JOptionPane.showMessageDialog(null,
+                            "Preencha pelo menos o RA e o Nome na aba 'Dados Pessoais'.");
+                        return;
+                    }
 
-	    String ufSelecionada = (String) cmbUF.getSelectedItem();
-	    cmbCampus.removeAllItems();
+                    // Converte data dd/MM/yyyy → java.sql.Date
+                    java.sql.Date dataNasc = null;
+                    if (!dataNascStr.replace("/", "").trim().isEmpty()) {
+                        try {
+                            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+                            sdf.setLenient(false);
+                            dataNasc = new java.sql.Date(sdf.parse(dataNascStr).getTime());
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(null,
+                                "Data de Nascimento inválida. Use o formato dd/MM/aaaa.");
+                            return;
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Informe a Data de Nascimento.");
+                        return;
+                    }
 
-	    java.util.List<String> campiDaUF = mapaUFCampi.get(ufSelecionada);
+                    // Valida seleção de curso
+                    if (cmbCursos.getSelectedItem() == null || cmbCampus.getSelectedItem() == null) {
+                        JOptionPane.showMessageDialog(null, "Selecione um Curso e um Campus.");
+                        return;
+                    }
 
-	    if (campiDaUF != null) {
-	        for (String campus : campiDaUF) {
-	            // Só adiciona se o campus existe no banco (segurança extra)
-	            if (todosCampi != null && todosCampi.contains(campus)) {
-	                cmbCampus.addItem(campus);
-	            }
-	        }
-	    }
+                    String cursoSelecionado  = cmbCursos.getSelectedItem().toString();
+                    String campusSelecionado = cmbCampus.getSelectedItem().toString();
 
-	    if (cmbCampus.getItemCount() == 0) {
-	        cmbCampus.addItem("Nenhum campus disponível");
-	    }
-	}
+                    String periodoSelecionado = "";
+                    if      (rdbtnMatutino.isSelected())   periodoSelecionado = "Matutino";
+                    else if (rdbtnVespertino.isSelected())  periodoSelecionado = "Vespertino";
+                    else if (rdbtnNoturno.isSelected())     periodoSelecionado = "Noturno";
+
+                    if (periodoSelecionado.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Selecione um Período.");
+                        return;
+                    }
+
+                    // Descobre o codCurso pela combinação
+                    dao.CursoDAO cursoDAO = new dao.CursoDAO();
+                    int codCurso = cursoDAO.descobrirCodCurso(
+                        cursoSelecionado, campusSelecionado, periodoSelecionado);
+
+                    if (codCurso == 0) {
+                        JOptionPane.showMessageDialog(null,
+                            "Combinação de Curso, Campus e Período não encontrada no sistema.");
+                        return;
+                    }
+
+                    // Monta e insere o Aluno
+                    model.Aluno aluno = new model.Aluno(
+                        nome, ra, cpf, dataNasc,
+                        email, municipio, uf,
+                        String.valueOf(codCurso),
+                        endereco, celular
+                    );
+
+                    dao.AlunoDAO alunoDAO = new dao.AlunoDAO();
+                    alunoDAO.salvar(aluno);
+
+                    JOptionPane.showMessageDialog(null,
+                        "Aluno cadastrado com sucesso!\n\n" +
+                        "RA: "      + ra               + "\n" +
+                        "Nome: "    + nome             + "\n" +
+                        "Curso: "   + cursoSelecionado  + "\n" +
+                        "Campus: "  + campusSelecionado + "\n" +
+                        "Período: " + periodoSelecionado);
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null,
+                        "Erro ao cadastrar aluno: " + ex.getMessage());
+                }
+            }
+        });
+
+        // --- Botão ALTERAR (UPDATE completo) ---
+        JButton btnAlterarCursos = new JButton("");
+        btnAlterarCursos.setIcon(new ImageIcon(GUI.class.getResource("/images/update_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
+        btnAlterarCursos.setBounds(158, 265, 89, 45);
+        panelCurso.add(btnAlterarCursos);
+        btnAlterarCursos.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    // Coleta dados da aba Dados Pessoais
+                    String ra        = txtRa.getText().trim();
+                    String nome      = textField_1.getText().trim();
+                    String email     = textField_4.getText().trim();
+                    String endereco  = textField_3.getText().trim();
+                    String municipio = textField_6.getText().trim();
+                    String celular   = textField_7.getText().trim();
+                    String uf        = (cmbUF.getSelectedItem() != null) ? cmbUF.getSelectedItem().toString() : "";
+                    String cpf       = (fldCpf != null) ? fldCpf.getText().trim() : "";
+                    String dataNascStr = (fldDataNasc != null) ? fldDataNasc.getText().trim() : "";
+
+                    if (ra.isEmpty()) {
+                        JOptionPane.showMessageDialog(null,
+                            "Informe o RA do aluno na aba 'Dados Pessoais'.");
+                        return;
+                    }
+
+                    // Converte data
+                    java.sql.Date dataNasc = null;
+                    if (!dataNascStr.replace("/", "").trim().isEmpty()) {
+                        try {
+                            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+                            sdf.setLenient(false);
+                            dataNasc = new java.sql.Date(sdf.parse(dataNascStr).getTime());
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(null, "Data de Nascimento inválida.");
+                            return;
+                        }
+                    }
+
+                    // Valida seleção de curso
+                    if (cmbCursos.getSelectedItem() == null || cmbCampus.getSelectedItem() == null) {
+                        JOptionPane.showMessageDialog(null, "Selecione um Curso e um Campus.");
+                        return;
+                    }
+
+                    String cursoSelecionado  = cmbCursos.getSelectedItem().toString();
+                    String campusSelecionado = cmbCampus.getSelectedItem().toString();
+
+                    String periodoSelecionado = "";
+                    if      (rdbtnMatutino.isSelected())   periodoSelecionado = "Matutino";
+                    else if (rdbtnVespertino.isSelected())  periodoSelecionado = "Vespertino";
+                    else if (rdbtnNoturno.isSelected())     periodoSelecionado = "Noturno";
+
+                    if (periodoSelecionado.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Selecione um Período.");
+                        return;
+                    }
+
+                    // Descobre o codCurso
+                    dao.CursoDAO cursoDAO = new dao.CursoDAO();
+                    int codCurso = cursoDAO.descobrirCodCurso(
+                        cursoSelecionado, campusSelecionado, periodoSelecionado);
+
+                    if (codCurso == 0) {
+                        JOptionPane.showMessageDialog(null,
+                            "Combinação de Curso, Campus e Período não encontrada.");
+                        return;
+                    }
+
+                    // Confirmação
+                    int confirmacao = JOptionPane.showConfirmDialog(null,
+                        "Confirma a alteração do aluno RA " + ra + "?\n\n" +
+                        "Curso:   " + cursoSelecionado  + "\n" +
+                        "Campus:  " + campusSelecionado + "\n" +
+                        "Período: " + periodoSelecionado,
+                        "Confirmar Alteração",
+                        JOptionPane.YES_NO_OPTION);
+
+                    if (confirmacao != JOptionPane.YES_OPTION) return;
+
+                    // Monta e atualiza o Aluno
+                    model.Aluno aluno = new model.Aluno(
+                        nome, ra, cpf, dataNasc,
+                        email, municipio, uf,
+                        String.valueOf(codCurso),
+                        endereco, celular
+                    );
+
+                    dao.AlunoDAO alunoDAO = new dao.AlunoDAO();
+                    alunoDAO.atualizar(aluno);
+
+                    JOptionPane.showMessageDialog(null, "Aluno atualizado com sucesso!");
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null,
+                        "Erro ao alterar aluno: " + ex.getMessage());
+                }
+            }
+        });
+
+        // --- Botão CONSULTAR ---
+        JButton btnConsultarCursos = new JButton("");
+        btnConsultarCursos.setIcon(new ImageIcon(GUI.class.getResource("/images/search_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
+        btnConsultarCursos.setBounds(289, 265, 89, 45);
+        panelCurso.add(btnConsultarCursos);
+        btnConsultarCursos.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String ra = txtRa.getText().trim();
+
+                if (ra.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Campo RA não pode estar vazio!");
+                    return;
+                }
+
+                try {
+                    AlunoDAO alunoDAO = new AlunoDAO();
+                    Aluno aluno = alunoDAO.procurarAluno(ra);
+
+                    if (aluno == null) {
+                        JOptionPane.showMessageDialog(null, "Aluno não encontrado.");
+                        return;
+                    }
+
+                    // Preenche os campos da aba Dados Pessoais
+                    textField_1.setText(aluno.getNome());
+                    textField_4.setText(aluno.getEmail());
+                    textField_3.setText(aluno.getEndereco());
+                    textField_6.setText(aluno.getMunicipio());
+                    textField_7.setText(aluno.getCelular());
+                    if (fldCpf != null) fldCpf.setText(aluno.getCpf());
+                    if (aluno.getUf() != null) cmbUF.setSelectedItem(aluno.getUf());
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null,
+                        "Erro ao consultar aluno: " + ex.getMessage());
+                }
+            }
+        });
+
+        // --- Botão EXCLUIR ---
+        JButton btnExcluirCursos = new JButton("");
+        btnExcluirCursos.setIcon(new ImageIcon(GUI.class.getResource("/images/delete_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
+        btnExcluirCursos.setBounds(419, 265, 89, 45);
+        panelCurso.add(btnExcluirCursos);
+        btnExcluirCursos.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String ra = txtRa.getText().trim();
+
+                if (ra.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Campo RA não pode estar vazio!");
+                    return;
+                }
+
+                int confirmacao = JOptionPane.showConfirmDialog(null,
+                    "Confirma a exclusão do aluno RA " + ra + "?",
+                    "Confirmar Exclusão",
+                    JOptionPane.YES_NO_OPTION);
+
+                if (confirmacao != JOptionPane.YES_OPTION) return;
+
+                try {
+                    AlunoDAO alunoDAO = new AlunoDAO();
+                    Aluno aluno = new Aluno();
+                    aluno.setRa(ra);
+                    alunoDAO.excluir(aluno);
+                    JOptionPane.showMessageDialog(null, "Aluno excluído com sucesso!");
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null,
+                        "Erro ao excluir aluno: " + ex.getMessage());
+                }
+            }
+        });
+
+        // --- Botão SAIR ---
+        JButton btnSairCursos = new JButton("");
+        btnSairCursos.setIcon(new ImageIcon(GUI.class.getResource("/images/exit_to_app_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
+        btnSairCursos.setBounds(549, 265, 89, 45);
+        panelCurso.add(btnSairCursos);
+        btnSairCursos.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+
+        // =================================================
+        // ABA NOTAS E FALTAS
+        // =================================================
+        tabbedPane.addTab("Notas e Faltas", null, panelNotasFaltas, "Notas e faltas do aluno");
+
+        JLabel lblRa = new JLabel("RA");
+        lblRa.setFont(new Font("Dialog", Font.PLAIN, 18));
+        lblRa.setBounds(10, 25, 46, 14);
+        panelNotasFaltas.add(lblRa);
+
+        txtRaNotas = new JTextField();
+        txtRaNotas.setColumns(10);
+        txtRaNotas.setBounds(43, 25, 198, 20);
+        panelNotasFaltas.add(txtRaNotas);
+
+        txtNomeNotas = new JTextField("Deverá mostrar o nome do Aluno");
+        txtNomeNotas.setEditable(false);
+        txtNomeNotas.setColumns(10);
+        txtNomeNotas.setBounds(284, 25, 369, 20);
+        panelNotasFaltas.add(txtNomeNotas);
+
+        txtCursoNotas = new JTextField("Deverá mostrar o curso do Aluno");
+        txtCursoNotas.setEditable(false);
+        txtCursoNotas.setColumns(10);
+        txtCursoNotas.setBounds(26, 70, 627, 20);
+        panelNotasFaltas.add(txtCursoNotas);
+
+        JLabel lblDisciplina = new JLabel("Disciplina");
+        lblDisciplina.setFont(new Font("Dialog", Font.PLAIN, 18));
+        lblDisciplina.setBounds(10, 118, 88, 24);
+        panelNotasFaltas.add(lblDisciplina);
+
+        JComboBox cmbCursoNotas = new JComboBox();
+        cmbCursoNotas.setBounds(99, 122, 383, 22);
+        panelNotasFaltas.add(cmbCursoNotas);
+
+        JLabel lblSemestre = new JLabel("Semestre");
+        lblSemestre.setFont(new Font("Dialog", Font.PLAIN, 18));
+        lblSemestre.setBounds(10, 181, 81, 24);
+        panelNotasFaltas.add(lblSemestre);
+
+        JComboBox cmbSemestre = new JComboBox();
+        cmbSemestre.setBounds(99, 185, 94, 22);
+        panelNotasFaltas.add(cmbSemestre);
+
+        JLabel lblNota = new JLabel("Nota");
+        lblNota.setFont(new Font("Dialog", Font.PLAIN, 18));
+        lblNota.setBounds(234, 181, 38, 24);
+        panelNotasFaltas.add(lblNota);
+
+        JComboBox cmbSemestre_1 = new JComboBox();
+        cmbSemestre_1.setBounds(282, 185, 53, 22);
+        panelNotasFaltas.add(cmbSemestre_1);
+
+        JLabel lblFaltas = new JLabel("Faltas");
+        lblFaltas.setFont(new Font("Dialog", Font.PLAIN, 18));
+        lblFaltas.setBounds(389, 181, 53, 24);
+        panelNotasFaltas.add(lblFaltas);
+
+        txtFaltas = new JTextField();
+        txtFaltas.setColumns(10);
+        txtFaltas.setBounds(445, 186, 102, 20);
+        panelNotasFaltas.add(txtFaltas);
+
+        JButton btnSalvarNotas = new JButton("");
+        btnSalvarNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/save_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
+        btnSalvarNotas.setBounds(26, 268, 89, 45);
+        panelNotasFaltas.add(btnSalvarNotas);
+
+        JButton btnAlterarNotas = new JButton("");
+        btnAlterarNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/update_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
+        btnAlterarNotas.setBounds(152, 268, 89, 45);
+        panelNotasFaltas.add(btnAlterarNotas);
+
+        JButton btnConsultarNotas = new JButton("");
+        btnConsultarNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/search_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
+        btnConsultarNotas.setBounds(283, 268, 89, 45);
+        panelNotasFaltas.add(btnConsultarNotas);
+
+        JButton btnExcluirNotas = new JButton("");
+        btnExcluirNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/delete_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
+        btnExcluirNotas.setBounds(413, 268, 89, 45);
+        panelNotasFaltas.add(btnExcluirNotas);
+
+        JButton btnSairNotas = new JButton("");
+        btnSairNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/exit_to_app_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
+        btnSairNotas.setBounds(543, 268, 89, 45);
+        panelNotasFaltas.add(btnSairNotas);
+
+        // =================================================
+        // ABA BOLETIM
+        // =================================================
+        tabbedPane.addTab("Boletim", null, panelBoletim, "Boletim Completo");
+
+        JPanel painelFichaAluno = new JPanel();
+        painelFichaAluno.setLayout(null);
+        painelFichaAluno.setBorder(BorderFactory.createTitledBorder("Informações Acadêmicas"));
+        painelFichaAluno.setBounds(10, 11, 662, 85);
+        panelBoletim.add(painelFichaAluno);
+
+        lblRgmBoletim = new JLabel("RA: ");
+        lblRgmBoletim.setFont(new Font("Dubai", Font.BOLD, 14));
+        lblRgmBoletim.setBounds(15, 20, 600, 20);
+        painelFichaAluno.add(lblRgmBoletim);
+
+        lblNomeBoletim = new JLabel("Nome: ");
+        lblNomeBoletim.setFont(new Font("Dubai", Font.BOLD, 14));
+        lblNomeBoletim.setBounds(15, 40, 600, 20);
+        painelFichaAluno.add(lblNomeBoletim);
+
+        lblCursoBoletim = new JLabel("Curso: ");
+        lblCursoBoletim.setFont(new Font("Dubai", Font.BOLD, 14));
+        lblCursoBoletim.setBounds(15, 60, 600, 20);
+        painelFichaAluno.add(lblCursoBoletim);
+
+        String[] colunasBoletim = {"Disciplina / Matéria", "Nota Final", "Faltas Totais"};
+        modeloTabelaBoletim = new DefaultTableModel(colunasBoletim, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        tabelaBoletim = new JTable(modeloTabelaBoletim);
+        tabelaBoletim.setRowHeight(22);
+        tabelaBoletim.setFillsViewportHeight(true);
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        tabelaBoletim.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+        tabelaBoletim.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
+
+        JScrollPane scrollTabelaBoletim = new JScrollPane(tabelaBoletim);
+        scrollTabelaBoletim.setBounds(10, 107, 662, 203);
+        panelBoletim.add(scrollTabelaBoletim);
+
+        tabbedPane.addChangeListener(e -> {
+            if (tabbedPane.getSelectedIndex() == 3) {
+                String raDigitado = txtRaNotas.getText().trim();
+                if (!raDigitado.isEmpty()) {
+                    // Descomente quando AlunoDAO.buscarBoletim() estiver implementado:
+                    /*
+                    try {
+                        dao.AlunoDAO daoAluno = new dao.AlunoDAO();
+                        java.util.List<Desempenho> notas = daoAluno.buscarBoletim(raDigitado);
+                        atualizarInterfaceBoletim(notas);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    */
+                }
+            }
+        });
+
+        contentPane.add(tabbedPane);
+
+        // =================================================
+        // MENU BAR
+        // =================================================
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.setBounds(0, 0, 1121, 22);
+        contentPane.add(menuBar);
+
+        JMenu mnAluno = new JMenu("Aluno");
+        menuBar.add(mnAluno);
+
+        JMenuItem mntmSalvar = new JMenuItem("Salvar");
+        mntmSalvar.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK));
+        mnAluno.add(mntmSalvar);
+
+        JMenuItem mntmConsultar = new JMenuItem("Consultar");
+        mnAluno.add(mntmConsultar);
+
+        JMenuItem mntmAlterar = new JMenuItem("Alterar");
+        mnAluno.add(mntmAlterar);
+
+        JMenuItem mntmExcluir = new JMenuItem("Excluir");
+        mnAluno.add(mntmExcluir);
+
+        mnAluno.add(new JSeparator());
+
+        JMenuItem mntmSair = new JMenuItem("Sair");
+        mntmSair.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+        mntmSair.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+        mnAluno.add(mntmSair);
+
+        JMenu mnNotasFaltas = new JMenu("Notas e faltas");
+        menuBar.add(mnNotasFaltas);
+        mnNotasFaltas.add(new JMenuItem("Salvar"));
+        mnNotasFaltas.add(new JMenuItem("Alterar"));
+        mnNotasFaltas.add(new JMenuItem("Excluir"));
+        mnNotasFaltas.add(new JMenuItem("Consultar"));
+
+        JMenu mnAjuda = new JMenu("Ajuda");
+        menuBar.add(mnAjuda);
+
+        JMenuItem mntmSobre = new JMenuItem("Sobre");
+        mntmSobre.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.SHIFT_DOWN_MASK));
+        mntmSobre.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "Sistema Acadêmico - v1.0");
+            }
+        });
+        mnAjuda.add(mntmSobre);
+
+        carregarSeletoresCurso();
+    }
+
+    // =========================================================
+    // MÉTODOS AUXILIARES
+    // =========================================================
+
+    private void carregarSeletoresCurso() {
+        try {
+            dao.CursoDAO cursoDAO = new dao.CursoDAO();
+
+            if (cmbCursos != null) cmbCursos.removeAllItems();
+            if (cmbCampus != null) cmbCampus.removeAllItems();
+
+            java.util.List<model.Curso> listaCursos = cursoDAO.listarCursosParaCombo();
+            if (listaCursos != null) {
+                for (model.Curso c : listaCursos) {
+                    cmbCursos.addItem(c.getNomeCurso());
+                }
+            }
+
+            todosCampi = cursoDAO.listarCampiParaCombo();
+
+            inicializarMapaUFCampi();
+            filtrarCampiPorUF();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Erro ao popular seletores: " + e.getMessage());
+        }
+    }
+
+    private void inicializarMapaUFCampi() {
+        mapaUFCampi = new java.util.HashMap<>();
+        mapaUFCampi.put("SP", java.util.Arrays.asList("Itaquera", "Guarulhos", "Ferraz de Vasconcelos"));
+        mapaUFCampi.put("RJ", java.util.Arrays.asList("Rio de Janeiro", "Niteroi", "Campo Grande"));
+        mapaUFCampi.put("MG", java.util.Arrays.asList("Belo Horizonte", "Uberlandia"));
+        mapaUFCampi.put("ES", java.util.Arrays.asList("Vitoria"));
+        mapaUFCampi.put("RS", java.util.Arrays.asList("Porto Alegre"));
+    }
+
+    private void filtrarCampiPorUF() {
+        if (cmbUF == null || cmbCampus == null || mapaUFCampi == null) return;
+
+        String ufSelecionada = (String) cmbUF.getSelectedItem();
+        cmbCampus.removeAllItems();
+
+        java.util.List<String> campiDaUF = mapaUFCampi.get(ufSelecionada);
+        if (campiDaUF != null) {
+            for (String campus : campiDaUF) {
+                if (todosCampi != null && todosCampi.contains(campus)) {
+                    cmbCampus.addItem(campus);
+                }
+            }
+        }
+
+        if (cmbCampus.getItemCount() == 0) {
+            cmbCampus.addItem("Nenhum campus disponível");
+        }
+    }
+
+    public void atualizarInterfaceBoletim(java.util.List<Desempenho> listaDesempenho) {
+        if (listaDesempenho == null || listaDesempenho.isEmpty()) return;
+
+        modeloTabelaBoletim.setRowCount(0);
+
+        try {
+            Desempenho primeiroRegistro = listaDesempenho.get(0);
+            lblRgmBoletim.setText("RA: "    + primeiroRegistro.getRa());
+            lblNomeBoletim.setText("Nome: " + primeiroRegistro.getNome());
+            lblCursoBoletim.setText("Curso: " + primeiroRegistro.getCodCurso());
+
+            for (Desempenho d : listaDesempenho) {
+                modeloTabelaBoletim.addRow(new Object[]{
+                    d.getCodDisciplina(),
+                    d.getNota(),
+                    d.getFaltas()
+                });
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this,
+                "Erro ao popular a tabela de boletim: " + ex.getMessage());
+        }
+    }
+
+    private static void addPopup(Component component, final JPopupMenu popup) {
+        component.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                if (e.isPopupTrigger()) popup.show(e.getComponent(), e.getX(), e.getY());
+            }
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger()) popup.show(e.getComponent(), e.getX(), e.getY());
+            }
+        });
+    }
 }
