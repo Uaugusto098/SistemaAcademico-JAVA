@@ -49,6 +49,7 @@ import javax.swing.BorderFactory;
 import java.util.List;
 import javax.swing.JOptionPane;
 import model.Curso;
+import dao.AlunoDAO;
 import dao.CursoDAO;
 
 // Importações do modelo do grupo
@@ -59,7 +60,7 @@ public class GUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField textField;
+	private JTextField txtRa;
 	private JTextField textField_1;
 	private JTextField textField_3;
 	private JTextField textField_4;
@@ -137,10 +138,10 @@ public class GUI extends JFrame {
 		lblNewLabel.setBounds(21, 24, 46, 14);
 		panelDados.add(lblNewLabel);
 		
-		textField = new JTextField();
-		textField.setBounds(51, 22, 158, 20);
-		panelDados.add(textField);
-		textField.setColumns(10);
+		txtRa = new JTextField();
+		txtRa.setBounds(51, 22, 158, 20);
+		panelDados.add(txtRa);
+		txtRa.setColumns(10);
 		
 		JLabel lblNewLabel_1 = new JLabel("Nome");
 		lblNewLabel_1.setFont(new Font("Dubai", Font.PLAIN, 18));
@@ -295,7 +296,7 @@ public class GUI extends JFrame {
 		    public void actionPerformed(ActionEvent e) {
 		        try {
 		            //Valida o RA
-		            String ra = textField.getText().trim();
+		            String ra = txtRa.getText().trim();
 		            if (ra.isEmpty()) {
 		                JOptionPane.showMessageDialog(null,
 		                    "Informe o RA do aluno na aba 'Dados Pessoais' antes de salvar o curso.");
@@ -362,7 +363,7 @@ public class GUI extends JFrame {
 		    public void actionPerformed(ActionEvent e) {
 		        try {
 		            //Valida o RA (vem da aba Dados Pessoais)
-		            String ra = textField.getText().trim();
+		            String ra = txtRa.getText().trim();
 		            if (ra.isEmpty()) {
 		                JOptionPane.showMessageDialog(null,
 		                    "Informe o RA do aluno na aba 'Dados Pessoais' antes de alterar o curso.");
@@ -425,11 +426,74 @@ public class GUI extends JFrame {
 		});
 		
 		JButton btnConsultarCursos = new JButton("");
+		btnConsultarCursos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String ra = txtRa.getText().trim();
+
+				if(ra.isEmpty()) {
+				    JOptionPane.showMessageDialog(null, "Campo RA não pode estar vazio!");
+				    return;
+				} else {
+				    AlunoDAO dao = new AlunoDAO();
+				    Aluno aluno = new Aluno();
+				    
+				    // Como já pegamos a string limpa lá em cima, passamos direto aqui
+				    
+				    
+				    try {
+					
+				    aluno =	dao.procurarAluno(ra);
+				    aluno.getNome();
+				    aluno.getMunicipio();
+				    aluno.getEmail();
+				    aluno.getCelular();
+				    aluno.getCodCurso();
+				    aluno.getEndereco();
+				    aluno.getCpf();
+				    aluno.getDataNasc();
+				    aluno.getUf();
+				    
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				    
+				   
+				}
+				
+			}
+		});
 		btnConsultarCursos.setIcon(new ImageIcon(GUI.class.getResource("/images/search_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
 		btnConsultarCursos.setBounds(289, 265, 89, 45);
 		panelCurso.add(btnConsultarCursos);
 		
 		JButton btnExcluirCursos = new JButton("");
+		btnExcluirCursos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String ra = txtRa.getText().trim();
+
+				if(ra.isEmpty()) {
+				    JOptionPane.showMessageDialog(null, "Campo RA não pode estar vazio!");
+				    return;
+				} else {
+				    AlunoDAO dao = new AlunoDAO();
+				    Aluno aluno = new Aluno();
+				    
+				    // Como já pegamos a string limpa lá em cima, passamos direto aqui
+				    aluno.setRa(ra); 
+				    
+				    try {
+						dao.excluir(aluno);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				    
+				   
+				}
+				
+			}
+		});
 		btnExcluirCursos.setIcon(new ImageIcon(GUI.class.getResource("/images/delete_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
 		btnExcluirCursos.setBounds(419, 265, 89, 45);
 		panelCurso.add(btnExcluirCursos);
