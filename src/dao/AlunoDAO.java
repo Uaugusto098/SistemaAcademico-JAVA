@@ -221,4 +221,21 @@ public class AlunoDAO {
 	    }
 	}
 	
+	// Verifica se já existe um aluno com o mesmo RA ou CPF
+	public boolean existeRaOuCpf(String ra, String cpf) throws Exception {
+	    String sql = "SELECT ra FROM tbaluno WHERE ra = ? OR cpf = ?";
+	    try (Connection conn = ConnectionFactory.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+	        stmt.setString(1, ra);
+	        stmt.setString(2, cpf);
+
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            return rs.next(); // true = já existe
+	        }
+	    } catch (SQLException e) {
+	        throw new Exception("Erro ao verificar duplicidade: " + e.getMessage());
+	    }
+	}
+	
 }
