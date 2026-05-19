@@ -200,4 +200,31 @@ public class DisciplinasDAO {
 
         return lista;
     }
+ // ================= LISTAR DISCIPLINAS POR CURSO =================
+    public List<Disciplina> listarPorCurso(String codCurso) throws Exception {
+        List<Disciplina> lista = new ArrayList<>();
+
+        String SQL = "SELECT codDisciplina, nomeDisciplina FROM tbdisciplinas WHERE codCurso = ? ORDER BY nomeDisciplina";
+
+        try {
+            conn = ConnectionFactory.getConnection();
+            ps = conn.prepareStatement(SQL);
+            ps.setInt(1, Integer.parseInt(codCurso)); // ✅ converte String para int
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Disciplina d = new Disciplina();
+                d.setCodDisciplina(rs.getInt("codDisciplina"));
+                d.setNomeDisciplina(rs.getString("nomeDisciplina"));
+                lista.add(d);
+            }
+
+        } catch (SQLException e) {
+            throw new Exception("Erro ao listar disciplinas por curso: " + e);
+        } finally {
+            ConnectionFactory.closeConnection(conn);
+        }
+
+        return lista;
+    }
 }

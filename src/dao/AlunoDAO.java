@@ -53,6 +53,31 @@ public class AlunoDAO {
             ConnectionFactory.closeConnection(conn);
         }
 	}
+	public void excluirComCascata(String ra) throws Exception {
+	    try {
+	        conn = ConnectionFactory.getConnection();
+	        conn.setAutoCommit(false); // ← tudo numa transação, ou tudo ou nada
+
+	        // 1. Deleta primeiro o desempenho (filho)
+	        ps = conn.prepareStatement("DELETE FROM tbdesempenho WHERE ra = ?");
+	        ps.setString(1, ra);
+	        ps.executeUpdate();
+
+	        // 2. Depois deleta o aluno (pai)
+	        ps = conn.prepareStatement("DELETE FROM tbaluno WHERE ra = ?");
+	        ps.setString(1, ra);
+	        ps.executeUpdate();
+
+	        conn.commit(); // ← confirma tudo
+
+	    } catch (SQLException e) {
+	        conn.rollback(); // ← se der erro, desfaz tudo
+	        throw new Exception("Erro ao excluir aluno: " + e);
+	    } finally {
+	        conn.setAutoCommit(true);
+	        ConnectionFactory.closeConnection(conn);
+	    }
+	}
 	
 	// 2. Método Listar 
 	public List<Aluno> todosAlunos() throws Exception {

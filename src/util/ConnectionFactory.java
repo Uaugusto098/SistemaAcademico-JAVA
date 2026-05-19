@@ -4,14 +4,16 @@ import java.security.DomainCombiner;
 public class ConnectionFactory {
 	
 	public static Connection getConnection() throws Exception{
-		
+		System.setProperty("file.encoding", "UTF-8");  // ← adicione aqui
 		try {
 		Class.forName("com.mysql.jdbc.Driver");
-		String url = "jdbc:mysql://localhost:3306/dbacademico?useSSL=false&serverTimezone=UTC";
+		String url = "jdbc:mysql://localhost:3306/dbacademico?useSSL=false&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8";
 		String login="root";
 		String senha="";
 		
-		return DriverManager.getConnection(url,login,senha);
+		Connection conn = DriverManager.getConnection(url, login, senha);
+		conn.createStatement().execute("SET NAMES 'utf8mb4'");
+		return conn;
 		
 	} 
 		catch(Exception e) {
@@ -21,25 +23,16 @@ public class ConnectionFactory {
 	
 	
 	
-	public static void closeConnection(Connection conn) throws Exception{
-		close(conn);
-		
-	}
-	
-	private static void close(Connection conn) 
-		throws Exception{
-			
-			try {
-				conn.close();
-				
-			}
-			
-			catch(Exception e)
-			{
-				throw new Exception(e.getMessage());
-			}
-		}
-	}
+	public static void closeConnection(Connection conn) {
+        if (conn != null) { // ← evita NullPointerException
+            try {
+                conn.close();
+            } catch (Exception e) {
+                System.err.println("Erro ao fechar conexão: " + e.getMessage());
+            }
+        }
+    }
+}
 
 
 

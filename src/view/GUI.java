@@ -22,6 +22,7 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
 import java.awt.event.ActionEvent;
 import javax.swing.JSeparator;
 import javax.swing.ButtonGroup;
@@ -44,6 +45,7 @@ import dao.DisciplinasDAO;
 import model.Aluno;
 import model.Desempenho;
 import model.Disciplina;
+
 
 public class GUI extends JFrame {
 
@@ -377,6 +379,15 @@ public class GUI extends JFrame {
         txtRaNotas.setBounds(43, 25, 198, 20);
         panelNotasFaltas.add(txtRaNotas);
 
+        txtRaNotas.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusLost(java.awt.event.FocusEvent e) {
+                String ra = txtRaNotas.getText().trim();
+                if (!ra.isEmpty()) {
+                    carregarDisciplinasPorRA(ra);
+                }
+            }
+        });
         txtNomeNotas = new JTextField("Deverá mostrar o nome do Aluno");
         txtNomeNotas.setEditable(false);
         txtNomeNotas.setColumns(10);
@@ -398,12 +409,15 @@ public class GUI extends JFrame {
         cmbDisciplinas.setBounds(99, 122, 383, 22);
         try {
             DisciplinasDAO dao = new DisciplinasDAO();
-            for (Disciplina d : dao.listarParaCombo()) {
+            List<Disciplina> lista = dao.listarParaCombo();
+            System.out.println("Total disciplinas carregadas: " + lista.size()); // ← debug
+            for (Disciplina d : lista) {
+                System.out.println("  -> " + d.getCodDisciplina() + " | " + d.getNomeDisciplina()); // ← debug
                 cmbDisciplinas.addItem(d);
             }
-
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Erro ao carregar disciplinas: " + e.getMessage());
+            e.printStackTrace(); // ← mostra erro completo no console
         }
         panelNotasFaltas.add(cmbDisciplinas);
 
@@ -443,31 +457,52 @@ public class GUI extends JFrame {
 
         JButton btnSalvarNotas = new JButton("");
         btnSalvarNotas.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		
-        		 try {
-        	            if (txtNota.getText().isEmpty() || txtFaltas.getText().isEmpty()) {
-        	                JOptionPane.showMessageDialog(null, "Preencha nota e faltas!");
-        	                return;
-        	            }
-        	            
-        	            Disciplina disc = (Disciplina) cmbDisciplinas.getSelectedItem();
-        	            Desempenho d = new Desempenho();
-        	            d.setRa(txtRaNotas.getText());
-        	            d.setCodDisciplina(disc.getCodDisciplina());
-        	            d.setSemestre(cmbSemestre.getSelectedItem().toString());
-        	            d.setNota(Double.parseDouble(txtNota.getText())); 
-        	            d.setFaltas(Integer.parseInt(txtFaltas.getText()));
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if (txtNota.getText().isEmpty() || txtFaltas.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Preencha nota e faltas!");
+                        return;
+                    }
+                    double nota = Double.parseDouble(txtNota.getText().replace(",", "."));
+                    if (nota < 0 || nota > 10) {
+                        JOptionPane.showMessageDialog(null, "Nota inválida! Digite um valor entre 0 e 10.");
+                        return;
+                    }
 
-        	            DesempenhoDAO dao = new DesempenhoDAO();
-        	            dao.inserir(d);
+                    Disciplina disc = (Disciplina) cmbDisciplinas.getSelectedItem();
+                    String ra = txtRaNotas.getText().trim();
+                    int codDisciplina = disc.getCodDisciplina();
+                    String semestre = cmbSemestre.getSelectedItem().toString();
 
-        	            JOptionPane.showMessageDialog(null, "Nota salva com sucesso!");
-        	            txtNota.setText("");
-                        txtFaltas.setText("");
-        	        } catch (Exception ex) {
-        	            JOptionPane.showMessageDialog(null, "Erro ao salvar: " + ex.getMessage());
-        	        }
+                    // ✅ Verifica se já existe registro antes de salvar
+                    DesempenhoDAO dao = new DesempenhoDAO();
+                    Desempenho existente = dao.consultar(ra, codDisciplina, semestre);
+
+                    if (existente != null) {
+                        JOptionPane.showMessageDialog(null,
+                            "Este aluno já possui nota cadastrada para esta disciplina e semestre.\n" +
+                            "Utilize o botão 'Atualizar' para alterar os dados.",
+                            "Registro já existe",
+                            JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+
+                    Desempenho d = new Desempenho();
+                    d.setRa(ra);
+                    d.setCodDisciplina(codDisciplina);
+                    d.setSemestre(semestre);
+                    d.setNota(nota);
+                    d.setFaltas(Integer.parseInt(txtFaltas.getText()));
+
+                    dao.inserir(d);
+
+                    JOptionPane.showMessageDialog(null, "Nota salva com sucesso!");
+                    txtNota.setText("");
+                    txtFaltas.setText("");
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Erro ao salvar: " + ex.getMessage());
+                }
             }
         });
         btnSalvarNotas.setIcon(new ImageIcon(GUI.class.getResource("/images/save_38dp_000000_FILL0_wght400_GRAD0_opsz40.png")));
@@ -755,32 +790,51 @@ public class GUI extends JFrame {
         menuItem.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		
-        		 try {
-     	            if (txtNota.getText().isEmpty() || txtFaltas.getText().isEmpty()) {
-     	                JOptionPane.showMessageDialog(null, "Preencha nota e faltas!");
-     	                return;
-     	            }
-     	            
-     	            Disciplina disc = (Disciplina) cmbDisciplinas.getSelectedItem();
-     	            Desempenho d = new Desempenho();
-     	            d.setRa(txtRaNotas.getText());
-     	            d.setCodDisciplina(disc.getCodDisciplina());
-     	            d.setSemestre(cmbSemestre.getSelectedItem().toString());
-     	            d.setNota(Double.parseDouble(txtNota.getText())); 
-     	            d.setFaltas(Integer.parseInt(txtFaltas.getText()));
+        		try {
+                    if (txtNota.getText().isEmpty() || txtFaltas.getText().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Preencha nota e faltas!");
+                        return;
+                    }
+                    double nota = Double.parseDouble(txtNota.getText().replace(",", "."));
+                    if (nota < 0 || nota > 10) {
+                        JOptionPane.showMessageDialog(null, "Nota inválida! Digite um valor entre 0 e 10.");
+                        return;
+                    }
 
-     	            DesempenhoDAO dao = new DesempenhoDAO();
-     	            dao.inserir(d);
+                    Disciplina disc = (Disciplina) cmbDisciplinas.getSelectedItem();
+                    String ra = txtRaNotas.getText().trim();
+                    int codDisciplina = disc.getCodDisciplina();
+                    String semestre = cmbSemestre.getSelectedItem().toString();
 
-     	            JOptionPane.showMessageDialog(null, "Nota salva com sucesso!");
-     	            txtNota.setText("");
-                     txtFaltas.setText("");
-     	        } catch (Exception ex) {
-     	            JOptionPane.showMessageDialog(null, "Erro ao salvar: " + ex.getMessage());
-     	        }
-        		
-        		
-        		
+                    // ✅ Verifica se já existe registro antes de salvar
+                    DesempenhoDAO dao = new DesempenhoDAO();
+                    Desempenho existente = dao.consultar(ra, codDisciplina, semestre);
+
+                    if (existente != null) {
+                        JOptionPane.showMessageDialog(null,
+                            "Este aluno já possui nota cadastrada para esta disciplina e semestre.\n" +
+                            "Utilize o botão 'Atualizar' para alterar os dados.",
+                            "Registro já existe",
+                            JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+
+                    Desempenho d = new Desempenho();
+                    d.setRa(ra);
+                    d.setCodDisciplina(codDisciplina);
+                    d.setSemestre(semestre);
+                    d.setNota(nota);
+                    d.setFaltas(Integer.parseInt(txtFaltas.getText()));
+
+                    dao.inserir(d);
+
+                    JOptionPane.showMessageDialog(null, "Nota salva com sucesso!");
+                    txtNota.setText("");
+                    txtFaltas.setText("");
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Erro ao salvar: " + ex.getMessage());
+                }
         	}
         });
         mnNotasFaltas.add(menuItem);
@@ -1147,9 +1201,8 @@ public class GUI extends JFrame {
     	
     
     
-   public void excluirAluno()
-   {
-	    String ra = txtRa.getText().trim();
+    public void excluirAluno() {
+        String ra = txtRa.getText().trim();
 
         if (ra.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Campo RA não pode estar vazio!");
@@ -1157,23 +1210,21 @@ public class GUI extends JFrame {
         }
 
         int confirmacao = JOptionPane.showConfirmDialog(null,
-            "Confirma a exclusão do aluno RA " + ra + "?",
+            "Confirma a exclusão do aluno RA " + ra + "?\n" +
+            "Todas as notas e faltas também serão excluídas!",
             "Confirmar Exclusão",
-            JOptionPane.YES_NO_OPTION);
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE);
 
         if (confirmacao != JOptionPane.YES_OPTION) return;
 
         try {
             AlunoDAO alunoDAO = new AlunoDAO();
-            Aluno aluno = new Aluno();
-            aluno.setRa(ra);
-            alunoDAO.excluir(aluno);
+            alunoDAO.excluirComCascata(ra);
             JOptionPane.showMessageDialog(null, "Aluno excluído com sucesso!");
-            
             limparCampos();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null,
-                "Erro ao excluir aluno: " + ex.getMessage());
+            JOptionPane.showMessageDialog(null, "Erro ao excluir: " + ex.getMessage());
         }
     }
 	   
@@ -1181,6 +1232,16 @@ public class GUI extends JFrame {
     
    private void alterarNotas() {
 	    try {
+	    	try {
+	            double nota = Double.parseDouble(txtNota.getText().replace(",", "."));
+	            if (nota < 0 || nota > 10) {
+	                JOptionPane.showMessageDialog(null, "Nota inválida! Digite um valor entre 0 e 10.");
+	                return;
+	            }
+	        } catch (NumberFormatException ex) {
+	            JOptionPane.showMessageDialog(null, "Nota inválida! Digite apenas números.");
+	            return;
+	        }
 	        String ra = txtRaNotas.getText().trim();
 	        if (ra.isEmpty()) {
 	            JOptionPane.showMessageDialog(null, "Informe o RA do aluno!");
@@ -1221,7 +1282,42 @@ public class GUI extends JFrame {
 	}
     
     
-    
+   private void carregarDisciplinasPorRA(String ra) {
+	    try {
+	        AlunoDAO alunoDAO = new AlunoDAO();
+	        Aluno aluno = alunoDAO.procurarAluno(ra);
+
+	        if (aluno == null) {
+	            JOptionPane.showMessageDialog(null, "Aluno não encontrado.");
+	            return; // ← REMOVIDO o removeAllItems() daqui
+	        }
+
+	        System.out.println("RA: " + ra);
+	        System.out.println("codCurso: " + aluno.getCodCurso());
+
+	        DisciplinasDAO discDAO = new DisciplinasDAO();
+	        List<Disciplina> disciplinas = discDAO.listarPorCurso(aluno.getCodCurso());
+
+	        System.out.println("Disciplinas encontradas: " + disciplinas.size());
+	        for (Disciplina d : disciplinas) {
+	            System.out.println("  -> " + d.getCodDisciplina() + " | " + d.getNomeDisciplina());
+	        }
+
+	        if (disciplinas.isEmpty()) {
+	            JOptionPane.showMessageDialog(null, "Nenhuma disciplina encontrada para o curso " + aluno.getCodCurso());
+	            return; // ← NÃO limpa o combo se não achou nada
+	        }
+
+	        cmbDisciplinas.removeAllItems(); // ← só limpa se achou disciplinas
+	        for (Disciplina d : disciplinas) {
+	            cmbDisciplinas.addItem(d);
+	        }
+
+	    } catch (Exception e) {
+	        JOptionPane.showMessageDialog(null, "Erro ao carregar disciplinas: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	}
     public void alterarAluno() {
     	
     	  try {
