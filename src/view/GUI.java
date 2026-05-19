@@ -349,7 +349,7 @@ public class GUI extends JFrame {
         panelCurso.add(btnExcluirCursos);
         btnExcluirCursos.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	
+            		excluirAluno();
             }
         });
 
@@ -382,9 +382,11 @@ public class GUI extends JFrame {
         txtRaNotas.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusLost(java.awt.event.FocusEvent e) {
-                String ra = txtRaNotas.getText().trim();
-                if (!ra.isEmpty()) {
-                    carregarDisciplinasPorRA(ra);
+                if (!e.isTemporary()) { // ← ignora perda de foco para menus
+                    String ra = txtRaNotas.getText().trim();
+                    if (!ra.isEmpty()) {
+                        carregarDisciplinasPorRA(ra);
+                    }
                 }
             }
         });
@@ -552,7 +554,7 @@ public class GUI extends JFrame {
                             txtFaltas.setText("");
                             
                         } else {
-                            JOptionPane.showMessageDialog(null, "RA não encontrado.");
+                           return;
                         }
                     }
 
