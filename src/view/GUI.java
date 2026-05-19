@@ -62,7 +62,7 @@ public class GUI extends JFrame {
     private JFormattedTextField fldDataNasc;
     private JFormattedTextField fldCpf;
     private JComboBox cmbUF;
-
+    private boolean carregandoDados = false;
     // Aba Cursos
     private JComboBox cmbCursos;
     private JComboBox cmbCampus;
@@ -986,6 +986,7 @@ public class GUI extends JFrame {
 
     private void filtrarCampiPorUF() {
         if (cmbUF == null || cmbCampus == null || mapaUFCampi == null) return;
+        if (carregandoDados) return; // ← ignora durante consulta
 
         String ufSelecionada = (String) cmbUF.getSelectedItem();
         cmbCampus.removeAllItems();
@@ -1121,10 +1122,8 @@ public class GUI extends JFrame {
     
     
     
-    public void consultarAluno()
-    {
-    	
-    	String ra = txtRa.getText().trim();
+    public void consultarAluno() {
+        String ra = txtRa.getText().trim();
 
         if (ra.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Campo RA não pode estar vazio!");
@@ -1140,7 +1139,8 @@ public class GUI extends JFrame {
                 return;
             }
 
-            // Preenche campos da aba Dados Pessoais
+            carregandoDados = true; // ← ATIVA antes de mexer nos combos
+
             textField_1.setText(aluno.getNome());
             textField_4.setText(aluno.getEmail());
             textField_3.setText(aluno.getEndereco());
@@ -1164,27 +1164,20 @@ public class GUI extends JFrame {
                 fldDataNasc.setText(sdf.format(aluno.getDataNasc()));
             }
 
-            // Preenche campos da aba Cursos
             if (aluno.getCodCurso() != null && !aluno.getCodCurso().isEmpty()) {
                 try {
                     int codCurso = Integer.parseInt(aluno.getCodCurso());
                     dao.CursoDAO cursoDAO = new dao.CursoDAO();
-                    model.Curso curso = cursoDAO.buscarPorCodigo(codCurso); // você precisa ter esse método
+                    model.Curso curso = cursoDAO.buscarPorCodigo(codCurso);
 
                     if (curso != null) {
-                        // Seleciona o curso no combo
                         cmbCursos.setSelectedItem(curso.getNomeCurso());
-
-                        // Seleciona a UF e filtra o campus
                         if (aluno.getUf() != null) {
                             cmbUF.setSelectedItem(aluno.getUf());
-                            filtrarCampiPorUF();
+                            filtrarCampiPorUF(); // ← chama manualmente após ativar flag
                         }
-
-                        // Seleciona o campus
                         cmbCampus.setSelectedItem(curso.getCampus());
 
-                        // Seleciona o período
                         String periodo = curso.getPeriodo();
                         if ("Matutino".equalsIgnoreCase(periodo))        rdbtnMatutino.setSelected(true);
                         else if ("Vespertino".equalsIgnoreCase(periodo)) rdbtnVespertino.setSelected(true);
@@ -1197,6 +1190,8 @@ public class GUI extends JFrame {
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Erro ao consultar aluno: " + ex.getMessage());
+        } finally {
+            carregandoDados = false; // ← DESATIVA sempre, mesmo se der erro
         }
     }
     	
